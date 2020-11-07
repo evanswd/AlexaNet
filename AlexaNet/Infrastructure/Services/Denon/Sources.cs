@@ -1,4 +1,4 @@
-﻿namespace AlexaNet.Services.Denon
+﻿namespace AlexaNet.Infrastructure.Services.Denon
 {
     public enum Sources
     {

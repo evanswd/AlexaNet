@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AlexaNet.Services.Utilities;
+using AlexaNet.Infrastructure.Services.Utilities;
 
-namespace AlexaNet.Services.Monoprice
+namespace AlexaNet.Infrastructure.Services.Monoprice
 {
     public class MonopriceService : IService
     {

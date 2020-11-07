@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace AlexaNet.Services.Denon
+namespace AlexaNet.Infrastructure.Services.Denon
 {
     public class DenonService : IService
     {

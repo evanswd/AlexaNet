@@ -1,4 +1,4 @@
-﻿namespace AlexaNet.Services.Monoprice
+﻿namespace AlexaNet.Infrastructure.Services.Monoprice
 {
     public class ZoneStatus
     {

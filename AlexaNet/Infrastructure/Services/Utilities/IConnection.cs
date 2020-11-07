@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlexaNet.Services.Utilities
+namespace AlexaNet.Infrastructure.Services.Utilities
 {
     public interface IConnection : IDisposable
     {

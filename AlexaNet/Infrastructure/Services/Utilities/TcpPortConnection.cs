@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace AlexaNet.Services.Utilities
+namespace AlexaNet.Infrastructure.Services.Utilities
 {
     public class TcpPortConnection : IConnection
     {

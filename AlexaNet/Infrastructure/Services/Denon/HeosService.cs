@@ -1,7 +1,7 @@
 ﻿using System;
-using AlexaNet.Services.Utilities;
+using AlexaNet.Infrastructure.Services.Utilities;
 
-namespace AlexaNet.Services.Denon
+namespace AlexaNet.Infrastructure.Services.Denon
 {
     public class HeosService : IService
     {
