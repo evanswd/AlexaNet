@@ -14,9 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Infrastructure\Amazon.Skills\" />
-    <Folder Include="Services\Denon\" />
-    <Folder Include="Services\Monoprice\" />
-    <Folder Include="Services\Utilities\" />
   </ItemGroup>
 
 </Project>
