@@ -41,7 +41,6 @@ namespace AlexaNet.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("SoundOff")]
         public void SoundOff()
         {
@@ -53,7 +52,6 @@ namespace AlexaNet.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("SoundOn")]
         public void SoundOn()
         {
