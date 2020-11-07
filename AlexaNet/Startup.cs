@@ -21,7 +21,7 @@ namespace AlexaNet
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             //Configure Documentation
             services.AddSwaggerGen(c =>
             {
