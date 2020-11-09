@@ -1,5 +1,5 @@
 ﻿using System;
-using AlexaNet.Infrastructure.Services.Utilities;
+using Alexa.NET.SmartHome.Utilities;
 
 namespace AlexaNet.Infrastructure.Services.Denon
 {

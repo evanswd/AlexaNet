@@ -1,13 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Alexa.NET.SmartHome.Domain;
+﻿using System.Threading.Tasks;
 using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
+using Alexa.NET.SmartHome.IoC;
 using Microsoft.AspNetCore.Mvc;
 using AlexaNet.Infrastructure.Amazon.Alexa;
-using AlexaNet.Infrastructure.Services.Monoprice;
 using Microsoft.Extensions.Configuration;
 
 namespace AlexaNet.Controllers.Alexa
@@ -30,7 +26,9 @@ namespace AlexaNet.Controllers.Alexa
             if(request?.Directive?.Header?.Namespace =="Alexa.Discovery" && request.Directive?.Header?.Name == "Discover")
                 return DiscoveryUtils.PerformDiscovery(request.Directive);
 
-            if (request?.Directive?.Header?.Namespace == "Alexa.PowerController" && request.Directive?.Header?.Name == "TurnOff")
+            return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, request?.Directive);
+
+            /*if (request?.Directive?.Header?.Namespace == "Alexa.PowerController" && request.Directive?.Header?.Name == "TurnOff")
             {
                 using var svc = new MonopriceService(_config["Monoprice.IpAddress"], int.Parse(_config["Monoprice.TcpPort"]));
                 svc.SetPowerOff(3);
@@ -108,7 +106,7 @@ namespace AlexaNet.Controllers.Alexa
             var x = await reader.ReadToEndAsync();
             await System.IO.File.WriteAllTextAsync(DateTime.Now.Ticks + "_skill.log", x);
             
-            return new EventResponse();
+            return new EventResponse();*/
 
 
             /*if (input?.Directive?.Header?.Namespace == "Alexa.Discovery")

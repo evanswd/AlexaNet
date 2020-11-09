@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AlexaNet.Infrastructure.Services.Utilities;
+using Alexa.NET.SmartHome.Utilities;
+using AlexaNet.Infrastructure.Services.Monoprice;
 
-namespace AlexaNet.Infrastructure.Services.Monoprice
+namespace Alexa.NET.Skills.Monoprice.Service
 {
-    public class MonopriceService : IService
+    public class MonopriceService : IDisposable
     {
         private readonly TcpPortConnection _conn;
 

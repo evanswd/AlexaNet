@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlexaNet.Infrastructure.Services.Utilities
+namespace Alexa.NET.SmartHome.Utilities
 {
     public interface IConnection : IDisposable
     {
