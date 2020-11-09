@@ -21,7 +21,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
         {
             using (_monopriceService)
             {
-                _monopriceService.SetPowerOn(3);
+                _monopriceService.SetPowerOn(directive.Endpoint.EndpointID);
                 return BuildResponse(directive);
             }
         }
@@ -30,7 +30,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
         {
             using (_monopriceService)
             {
-                _monopriceService.SetPowerOff(3);
+                _monopriceService.SetPowerOff(directive.Endpoint.EndpointID);
                 return BuildResponse(directive);
             }
         }
@@ -42,9 +42,9 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             var properties = new[]
             {
                 new ContextProperty {Namespace = "Alexa.PowerController", Name = "powerState", Value = status.PowerOn ? "ON" : "OFF"},
-                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = status.Volume.ToString()},
+                //new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = status.Volume.ToString()},
                 //TODO: This should work for real..
-                new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = "false"}
+                //new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = "false"}
             };
             
             var response = new EventResponse

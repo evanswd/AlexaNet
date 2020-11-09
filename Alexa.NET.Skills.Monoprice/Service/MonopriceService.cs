@@ -35,6 +35,16 @@ namespace Alexa.NET.Skills.Monoprice.Service
                 _conn.WriteData($"<1{zone}PR01");
         }
 
+        public void SetPowerOn(string zone)
+        {
+            SetPowerOn(int.Parse(zone.Substring(4)));
+        }
+
+        public void SetPowerOff(string zone)
+        {
+            SetPowerOff(int.Parse(zone.Substring(4)));
+        }
+
         public void SetPowerOff(params int[] zones)
         {
             foreach (var zone in zones)
