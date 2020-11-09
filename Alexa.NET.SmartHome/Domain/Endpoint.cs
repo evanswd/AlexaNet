@@ -5,8 +5,8 @@ namespace Alexa.NET.SmartHome.Domain
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Endpoint
     {
-        //[JsonProperty("scope")]
-        //public Scope Scope { get; set; }
+        [JsonProperty("scope")]
+        public Scope Scope { get; set; }
 
         [JsonProperty("endpointId")] 
         public string EndpointID { get; set; }
@@ -29,13 +29,16 @@ namespace Alexa.NET.SmartHome.Domain
         [JsonProperty("capabilities")]
         public Capability[] Capabilities { get; set; }
 
-        //[JsonProperty("connections")]
-        //public string Connections { get; set; }
+        //TODO: Finish
+        [JsonProperty("connections")]
+        public object Connections { get; set; }
 
-        //[JsonProperty("relationships")]
-        //public string Relationships { get; set; }
+        //TODO: Finish
+        [JsonProperty("relationships")]
+        public object Relationships { get; set; }
 
-        //[JsonProperty("cookie")] 
-        //public object Cookie { get; set; }
+        //TODO: Finish
+        [JsonProperty("cookie")] 
+        public object Cookie { get; set; }
     }
 }

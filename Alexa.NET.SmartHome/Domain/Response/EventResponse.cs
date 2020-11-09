@@ -6,5 +6,8 @@ namespace Alexa.NET.SmartHome.Domain.Response
     {
         [JsonProperty("event")] 
         public Directive Event { get; set; }
+
+        [JsonProperty("context")] 
+        public Context Context { get; set; }
     }
 }

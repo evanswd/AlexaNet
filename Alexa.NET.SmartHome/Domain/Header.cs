@@ -13,6 +13,9 @@ namespace Alexa.NET.SmartHome.Domain
         [JsonProperty("messageId")]
         public string MessageID { get; set; }
 
+        [JsonProperty("correlationToken")] 
+        public string CorrelationToken { get; set; }
+
         [JsonProperty("payloadVersion")]
         public string PayloadVersion { get; set; }
     }
