@@ -26,7 +26,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
         {
             var res = _conn.WriteData("?10", 6);
             var lines = res.Split(new[] {"\r\n"}, StringSplitOptions.None);
-            return lines.Select(line => new ZoneStatus(line)).ToList();
+            return lines.Skip(1).Take(6).Select(line => new ZoneStatus(line)).ToList();
         }
 
         public void SetPowerOn(params int[] zones)

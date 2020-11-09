@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using Alexa.NET.Skills.Monoprice.Service;
 using Alexa.NET.SmartHome.Domain;
 using Alexa.NET.SmartHome.Domain.Response;
@@ -19,18 +19,34 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
 
         public EventResponse TurnOn(Directive directive)
         {
-            _monopriceService.SetPowerOn(3);
-            return CreateResponse(directive);
+            using (_monopriceService)
+            {
+                _monopriceService.SetPowerOn(3);
+                return BuildResponse(directive);
+            }
         }
 
         public EventResponse TurnOff(Directive directive)
         {
-            _monopriceService.SetPowerOff(3);
-            return CreateResponse(directive);
+            using (_monopriceService)
+            {
+                _monopriceService.SetPowerOff(3);
+                return BuildResponse(directive);
+            }
         }
 
-        private EventResponse CreateResponse(Directive directive)
+        private EventResponse BuildResponse(Directive directive)
         {
+            var status = _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
+
+            var properties = new[]
+            {
+                new ContextProperty {Namespace = "Alexa.PowerController", Name = "powerState", Value = status.PowerOn ? "ON" : "OFF"},
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = status.Volume.ToString()},
+                //TODO: This should work for real..
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = "false"}
+            };
+            
             var response = new EventResponse
             {
                 Event = new Directive
@@ -42,18 +58,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                     },
                     Payload = new Payload()
                 },
-                Context = new Context
-                {
-                    Properties = new[]
-                    {
-                        new ContextProperty
-                        {
-                            Namespace = "Alexa.PowerController",
-                            Name = "powerState",
-                            Value = "ON"
-                        }
-                    }
-                }
+                Context = new Context { Properties = properties }
             };
             response.Event.Header.Namespace = "Alexa";
             response.Event.Header.Name = "Response";
