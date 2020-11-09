@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 namespace Alexa.NET.SmartHome.Domain
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Capability
     {
         [JsonProperty("type")]
@@ -32,18 +33,18 @@ namespace Alexa.NET.SmartHome.Domain
         //[JsonProperty("verificationsRequired")]
         //public VerificationsRequired[] VerificationsRequired { get; set; }
 
-        public Capability()
+        public Capability(string alexaInterface, params string[] supported)
         {
             Type = "AlexaInterface";
             Version = "3";
-        }
-        public Capability(string alexaInterface, params string[] supported)
-        {
             Interface = alexaInterface;
-            Properties = new Properties
-            {
-                Supported = supported.Select(sup => new Supported(sup)).ToArray()
-            };
+            if(supported != null && supported.Length > 0)
+                Properties = new Properties
+                { 
+                    Supported = supported.Select(sup => new Supported(sup)).ToArray(),
+                    Retrievable = true,
+                    ProactivelyReported = true
+                };
         }
     }
 }

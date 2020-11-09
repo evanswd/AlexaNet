@@ -2,6 +2,7 @@
 
 namespace Alexa.NET.SmartHome.Domain
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Endpoint
     {
         //[JsonProperty("scope")]
@@ -35,6 +36,6 @@ namespace Alexa.NET.SmartHome.Domain
         //public string Relationships { get; set; }
 
         //[JsonProperty("cookie")] 
-        //public KVPair[] Cookie { get; set; }
+        //public object Cookie { get; set; }
     }
 }

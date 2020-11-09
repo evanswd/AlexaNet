@@ -2,6 +2,7 @@
 
 namespace Alexa.NET.SmartHome.Domain
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class Directive
     {
         [JsonProperty("header")] 

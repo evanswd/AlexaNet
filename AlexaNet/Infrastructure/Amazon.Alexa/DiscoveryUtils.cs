@@ -19,14 +19,16 @@ namespace AlexaNet.Infrastructure.Amazon.Alexa
                         {
                             new Endpoint
                             {
-                                EndpointID = "MP_Zone_3",
+                                EndpointID = "Zone3", //Careful... alphanumeric only... BAD documentation...
                                 ManufacturerName = "Monoprice",
                                 Description = "Not-so-smart Speaker by Bill Evans",
                                 FriendlyName = "Office Speakers",
                                 DisplayCategories = new [] {DisplayCategories.SPEAKER},
                                 Capabilities = new []
                                 {
-                                    new Capability("Alexa.Speaker", "volume", "muted")
+                                    //new Capability("Alexa"), 
+                                    new Capability("Alexa.Speaker", "volume", "muted"),
+                                    new Capability("Alexa.PowerController", "powerState")
                                 }
                             }
                         }
