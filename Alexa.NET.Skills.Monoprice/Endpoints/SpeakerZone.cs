@@ -11,9 +11,22 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
     {
         private readonly MonopriceService _monopriceService;
 
-        public SpeakerZone(IConfiguration config) : base(config)
+        public SpeakerZone(IConfiguration config, string alexaNamespace) 
+            : base(config, alexaNamespace)
         {
             _monopriceService = new MonopriceService(config["Monoprice.IpAddress"], int.Parse(config["Monoprice.TcpPort"]));
+        }
+
+        public EventResponse TurnOn(Directive directive)
+        {
+            _monopriceService.SetPowerOn(3);
+            return CreateResponse(directive);
+        }
+
+        public EventResponse TurnOff(Directive directive)
+        {
+            _monopriceService.SetPowerOff(3);
+            return CreateResponse(directive);
         }
 
         private EventResponse CreateResponse(Directive directive)
@@ -37,9 +50,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                         {
                             Namespace = "Alexa.PowerController",
                             Name = "powerState",
-                            Value = "ON",
-                            TimeOfSample = DateTime.UtcNow.ToString("s") + "Z",
-                            UncertaintyInMilliseconds = 500
+                            Value = "ON"
                         }
                     }
                 }
@@ -47,18 +58,6 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             response.Event.Header.Namespace = "Alexa";
             response.Event.Header.Name = "Response";
             return response;
-        }
-
-        public EventResponse TurnOn(Directive directive)
-        {
-            _monopriceService.SetPowerOn(3);
-            return CreateResponse(directive);
-        }
-
-        public EventResponse TurnOff(Directive directive)
-        {
-            _monopriceService.SetPowerOff(3);
-            return CreateResponse(directive);
         }
     }
 }

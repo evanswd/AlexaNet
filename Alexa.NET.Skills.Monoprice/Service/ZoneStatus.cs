@@ -13,7 +13,7 @@
         public ZoneStatus() { }
         public ZoneStatus(string data)
         {
-            Name = "Zone " + data.Substring(2, 1);
+            Name = "Zone" + data.Substring(2, 1);
             PowerOn = data.Substring(6, 1) == "1";
             KeypadConnected = data.Substring(22, 1) == "1";
             SelectedSource = int.Parse(data.Substring(19, 2));

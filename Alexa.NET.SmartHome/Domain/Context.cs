@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace Alexa.NET.SmartHome.Domain
 {
@@ -24,5 +25,11 @@ namespace Alexa.NET.SmartHome.Domain
 
         [JsonProperty("uncertaintyInMilliseconds")]
         public int UncertaintyInMilliseconds { get; set; }
+
+        public ContextProperty()
+        {
+            TimeOfSample = DateTime.UtcNow.ToString("s") + "Z";
+            UncertaintyInMilliseconds = 500;
+        }
     }
 }
