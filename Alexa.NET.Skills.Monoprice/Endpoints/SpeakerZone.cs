@@ -3,11 +3,12 @@ using Alexa.NET.Skills.Monoprice.Service;
 using Alexa.NET.SmartHome.Domain;
 using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.Interfaces;
+using AlexaNet.Infrastructure.Services.Monoprice;
 using Microsoft.Extensions.Configuration;
 
 namespace Alexa.NET.Skills.Monoprice.Endpoints
 {
-    public class SpeakerZone : AbstractSmartHomeInterface, IPowerController
+    public class SpeakerZone : AbstractSmartHomeInterface, IPowerController, ISpeaker
     {
         private readonly MonopriceService _monopriceService;
 
@@ -35,16 +36,53 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             }
         }
 
+        public EventResponse SetVolume(Directive directive)
+        {
+            using (_monopriceService)
+            {
+                var status = _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
+                var volume = directive.Payload.Volume;
+
+                //If it is off and we set it to any volume, turn it on...
+                if(volume <= 0 && status.PowerOn)
+                    _monopriceService.SetPowerOff(directive.Endpoint.EndpointID);
+
+                //If it is on and we set it to 0 or less... turn it off...
+                if (volume > 0 && (!status.PowerOn || status.Volume <= 0))
+                    _monopriceService.SetPowerOn(directive.Endpoint.EndpointID);
+
+                //When in doubt, change the volume...
+                _monopriceService.SetVolume(ConvertVolumeToMonoprice(volume), directive.Endpoint.EndpointID);
+
+                //Kick it back to Alexa
+                return BuildResponse(directive);
+            }
+        }
+
+
+
+        private int ConvertVolumeToMonoprice(int alexaVolume)
+        {
+            //Alexa's volume is 0 to 100
+            return (int)((alexaVolume / 100.0) * 38);
+        }
+
+        private int ConvertVolumeToAlexa(int monopriceVolume)
+        {
+            //Monoprice's volume is 0 to 38
+            return (int)((monopriceVolume / 38.0) * 100);
+        }
+
         private EventResponse BuildResponse(Directive directive)
         {
-            var status = _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
+            var status =  _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
 
             var properties = new[]
             {
                 new ContextProperty {Namespace = "Alexa.PowerController", Name = "powerState", Value = status.PowerOn ? "ON" : "OFF"},
-                //new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = status.Volume.ToString()},
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = status.Volume.ToString()},
                 //TODO: This should work for real..
-                //new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = "false"}
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = "false"}
             };
             
             var response = new EventResponse

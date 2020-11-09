@@ -51,6 +51,11 @@ namespace Alexa.NET.Skills.Monoprice.Service
                 _conn.WriteData($"<1{zone}PR00");
         }
 
+        public void SetVolume(int volume, string zone)
+        {
+            SetVolume(volume, int.Parse(zone.Substring(4)));
+        }
+
         public void SetVolume(int volume, params int[] zones)
         {
             if (volume < 0 || volume > 38)
