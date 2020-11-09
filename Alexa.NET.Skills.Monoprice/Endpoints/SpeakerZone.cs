@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Alexa.NET.Skills.Monoprice.Endpoints
 {
-    public class SpeakerZone : AbstractSmartHomeInterface, IPowerController, ISpeaker
+    public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IPowerController, ISpeaker
     {
         private readonly MonopriceService _monopriceService;
 
@@ -100,6 +100,42 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             };
             response.Event.Header.Namespace = "Alexa";
             response.Event.Header.Name = "Response";
+            return response;
+        }
+
+        public EventResponse Discover(Directive directive)
+        {
+            var response = new EventResponse
+            {
+                Event = new Directive
+                {
+                    Header = directive.Header,
+                    Payload = new Payload
+                    {
+                        Endpoints = new[]
+                        {
+                            new Endpoint
+                            {
+                                EndpointID = "Zone3", //Careful... alphanumeric only... BAD documentation...
+                                ManufacturerName = "Monoprice",
+                                Description = "Not-so-smart Speaker by Bill Evans",
+                                FriendlyName = "Office Speakers",
+                                DisplayCategories = new [] {DisplayCategories.SPEAKER},
+                                Capabilities = new []
+                                {
+                                    //new Capability("Alexa"), 
+                                    new Capability("Alexa.Speaker", "volume", "muted"),
+                                    new Capability("Alexa.PowerController", "powerState")
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            //Fix the header...
+            response.Event.Header.Name = "Discover.Response";
+            //Kick it back
             return response;
         }
     }

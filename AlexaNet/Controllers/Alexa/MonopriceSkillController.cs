@@ -3,7 +3,6 @@ using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.IoC;
 using Microsoft.AspNetCore.Mvc;
-using AlexaNet.Infrastructure.Amazon.Alexa;
 using Microsoft.Extensions.Configuration;
 
 namespace AlexaNet.Controllers.Alexa
@@ -23,9 +22,6 @@ namespace AlexaNet.Controllers.Alexa
         public async Task<EventResponse> Post(DirectiveRequest request)
         {
             //Gotta decide what we are doing here...
-            if(request?.Directive?.Header?.Namespace =="Alexa.Discovery" && request.Directive?.Header?.Name == "Discover")
-                return DiscoveryUtils.PerformDiscovery(request.Directive);
-
             return Invoker.InvokeAlexaMethod<EventResponse>(_config, request);
 
             /*//If we get here, dump the input...
