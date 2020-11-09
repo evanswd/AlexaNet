@@ -1,7 +1,6 @@
-﻿using Alexa.NET.SmartHome.Domain;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Alexa.NET.SmartHome.Request
+namespace Alexa.NET.SmartHome.Domain.Request
 {
     public class DirectiveRequest
     {

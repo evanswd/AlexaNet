@@ -1,16 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Alexa.NET.SmartHome.Domain;
+using Alexa.NET.SmartHome.Domain.Response;
 
 namespace AlexaNet.Infrastructure.Amazon.Alexa
 {
-    public class DiscoveryUtils
+    public static class DiscoveryUtils
     {
         //To Be Determined How this works... but it should find all my Alexa "stuff"
-        public void PerformDiscovery()
+        public static EventResponse PerformDiscovery(Directive directive)
         {
+            var response = new EventResponse
+            {
+                Event = new Directive
+                {
+                    Header = directive.Header,
+                    Payload = new Payload
+                    {
+                        Endpoints = new[]
+                        {
+                            new Endpoint
+                            {
+                                EndpointID = "MP_Zone_3",
+                                ManufacturerName = "Monoprice",
+                                Description = "Not-so-smart Speaker by Bill Evans",
+                                FriendlyName = "Office Speakers",
+                                DisplayCategories = new [] {DisplayCategories.SPEAKER},
+                                Capabilities = new []
+                                {
+                                    new Capability("Alexa.Speaker", "volume", "muted")
+                                }
+                            }
+                        }
+                    }
+                }
+            };
 
+            //Fix the header...
+            response.Event.Header.Name = "Discover.Response";
+            //Kick it back
+            return response;
         }
     }
 }

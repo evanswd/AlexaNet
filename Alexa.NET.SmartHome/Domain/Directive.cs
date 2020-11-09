@@ -7,6 +7,9 @@ namespace Alexa.NET.SmartHome.Domain
         [JsonProperty("header")] 
         public Header Header { get; set; }
 
+        [JsonProperty("endpoint")] 
+        public Endpoint Endpoint { get; set; }
+
         [JsonProperty("payload")]
         public Payload Payload { get; set; }
     }

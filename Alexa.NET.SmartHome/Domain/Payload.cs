@@ -6,14 +6,8 @@ namespace Alexa.NET.SmartHome.Domain
     {   
         [JsonProperty("scope")]
         public Scope Scope { get; set; }
-    }
 
-    public class Scope
-    {
-        [JsonProperty("type")]
-        public string Type { get; set; }
-
-        [JsonProperty("token")]
-        public string Token { get; set; }
+        [JsonProperty("endpoints")] 
+        public Endpoint[] Endpoints { get; set; }
     }
 }
