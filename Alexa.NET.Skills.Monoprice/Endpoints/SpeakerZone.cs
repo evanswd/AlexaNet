@@ -49,13 +49,13 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             return response;
         }
 
-        public EventResponse TurnOn(IConfiguration config, Directive directive)
+        public EventResponse TurnOn(Directive directive)
         {
             _monopriceService.SetPowerOn(3);
             return CreateResponse(directive);
         }
 
-        public EventResponse TurnOff(IConfiguration config, Directive directive)
+        public EventResponse TurnOff(Directive directive)
         {
             _monopriceService.SetPowerOff(3);
             return CreateResponse(directive);

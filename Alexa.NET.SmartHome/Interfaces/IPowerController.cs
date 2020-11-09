@@ -7,8 +7,8 @@ namespace Alexa.NET.SmartHome.Interfaces
     [AlexaNamespace("Alexa.PowerController")]
     public interface IPowerController
     {
-        EventResponse TurnOn(IConfiguration config, Directive directive);
+        EventResponse TurnOn(Directive directive);
 
-        EventResponse TurnOff(IConfiguration config, Directive directive);
+        EventResponse TurnOff(Directive directive);
     }
 }

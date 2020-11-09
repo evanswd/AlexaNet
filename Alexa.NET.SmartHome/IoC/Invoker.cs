@@ -21,9 +21,9 @@ namespace Alexa.NET.SmartHome.IoC
                 var method = type.GetMethods().FirstOrDefault(m => m.Name == alexaHeader.Name);
                 if (method != null)
                 {
-                    var magicConstructor = type.GetConstructor(Type.EmptyTypes);
-                    var magicClassObject = magicConstructor.Invoke(new object[] { });
-                    return (T)method.Invoke(magicClassObject, new object[] { config, directive });
+                    var magicConstructor = type.GetConstructor(new[] {typeof(IConfiguration)});
+                    var magicClassObject = magicConstructor.Invoke(new object[] { config });
+                    return (T)method.Invoke(magicClassObject, new object[] { directive });
                 }
             }
 
