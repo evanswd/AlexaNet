@@ -21,11 +21,11 @@ namespace Alexa.NET.SmartHome.Domain
         [JsonProperty("properties")]
         public Properties Properties { get; set; }
 
+        [JsonProperty("configurations")]
+        public Configuration Configurations { get; set; }
+
         //[JsonProperty("capabilityResources")]
         //public CapabilityResources CapabilityResources { get; set; }
-
-        //[JsonProperty("configuration")]
-        //public Configuration Configuration { get; set; }
 
         //[JsonProperty("semantics")]
         //public Semantics Semantics { get; set; }
@@ -33,7 +33,7 @@ namespace Alexa.NET.SmartHome.Domain
         //[JsonProperty("verificationsRequired")]
         //public VerificationsRequired[] VerificationsRequired { get; set; }
 
-        public Capability(string alexaInterface, params string[] supported)
+        public Capability(string alexaInterface, Configuration configurations = null, params string[] supported)
         {
             Type = "AlexaInterface";
             Version = "3";
@@ -42,9 +42,10 @@ namespace Alexa.NET.SmartHome.Domain
                 Properties = new Properties
                 { 
                     Supported = supported.Select(sup => new Supported(sup)).ToArray(),
-                    Retrievable = true,
-                    ProactivelyReported = true
+                    Retrievable = true
+                    //ProactivelyReported = true
                 };
+            Configurations = configurations;
         }
     }
 }

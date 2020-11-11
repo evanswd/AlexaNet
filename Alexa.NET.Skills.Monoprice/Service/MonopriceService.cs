@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Alexa.NET.SmartHome.Utilities;
-using AlexaNet.Infrastructure.Services.Monoprice;
 
 namespace Alexa.NET.Skills.Monoprice.Service
 {
@@ -29,15 +28,15 @@ namespace Alexa.NET.Skills.Monoprice.Service
             return lines.Skip(1).Take(6).Select(line => new ZoneStatus(line)).ToList();
         }
 
+        public void SetPowerOn(string zone)
+        {
+            SetPowerOn(int.Parse(zone.Substring(4)));
+        }
+
         public void SetPowerOn(params int[] zones)
         {
             foreach (var zone in zones)
                 _conn.WriteData($"<1{zone}PR01");
-        }
-
-        public void SetPowerOn(string zone)
-        {
-            SetPowerOn(int.Parse(zone.Substring(4)));
         }
 
         public void SetPowerOff(string zone)
@@ -49,6 +48,17 @@ namespace Alexa.NET.Skills.Monoprice.Service
         {
             foreach (var zone in zones)
                 _conn.WriteData($"<1{zone}PR00");
+        }
+
+        public void SetMute(bool mute, string zone)
+        {
+            SetMute(mute, int.Parse(zone.Substring(4)));
+        }
+
+        public void SetMute(bool mute, params int[] zones)
+        {
+            foreach (var zone in zones)
+                _conn.WriteData($"<1{zone}MU0" + (mute ? "1" : "0"));
         }
 
         public void SetVolume(int volume, string zone)
