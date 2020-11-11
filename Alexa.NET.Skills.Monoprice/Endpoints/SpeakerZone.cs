@@ -2,6 +2,9 @@
 using System.Linq;
 using Alexa.NET.Skills.Monoprice.Service;
 using Alexa.NET.SmartHome.Domain;
+using Alexa.NET.SmartHome.Domain.Constants;
+using Alexa.NET.SmartHome.Domain.Payloads;
+using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -19,90 +22,90 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                 int.Parse(config["Monoprice.TcpPort"]));
         }
 
-        public EventResponse TurnOn(Directive directive)
+        public EventResponse TurnOn(DirectiveRequest dr)
         {
             using (_monopriceService)
             {
-                _monopriceService.SetPowerOn(directive.Endpoint.EndpointID);
-                return BuildResponse(directive);
+                _monopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
+                return BuildResponse(dr.Directive);
             }
         }
 
-        public EventResponse TurnOff(Directive directive)
+        public EventResponse TurnOff(DirectiveRequest dr)
         {
             using (_monopriceService)
             {
-                _monopriceService.SetPowerOff(directive.Endpoint.EndpointID);
-                return BuildResponse(directive);
+                _monopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
+                return BuildResponse(dr.Directive);
             }
         }
 
-        public EventResponse SetMute(Directive directive)
+        public EventResponse SetMute(DirectiveRequest<SetMutePayload> dr)
         {
             using (_monopriceService)
             {
-                _monopriceService.SetMute(directive.Payload.Mute ?? false, directive.Endpoint.EndpointID);
-                return BuildResponse(directive);
+                _monopriceService.SetMute(dr.Directive.Payload.Mute, dr.Directive.Endpoint.EndpointID);
+                return BuildResponse(dr.Directive);
             }
         }
 
-        public EventResponse SetVolume(Directive directive)
+        public EventResponse SetVolume(DirectiveRequest<SetVolumePayload> dr)
         {
             using (_monopriceService)
             {
-                var status = _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
-                var volume = directive.Payload.Volume;
+                var status = _monopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
+                var volume = dr.Directive.Payload.Volume;
 
                 //If it is off and we set it to any volume, turn it on...
                 if(volume <= 0 && status.PowerOn)
-                    _monopriceService.SetPowerOff(directive.Endpoint.EndpointID);
+                    _monopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
 
                 //If it is on and we set it to 0 or less... turn it off...
                 if (volume > 0 && (!status.PowerOn || status.Volume <= 0))
-                    _monopriceService.SetPowerOn(directive.Endpoint.EndpointID);
+                    _monopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
 
                 //When in doubt, change the volume...
-                _monopriceService.SetVolume(ConvertVolumeToMonoprice(volume ?? 0), directive.Endpoint.EndpointID);
+                _monopriceService.SetVolume(ConvertVolumeToMonoprice(volume), dr.Directive.Endpoint.EndpointID);
 
                 //Kick it back to Alexa
-                return BuildResponse(directive);
+                return BuildResponse(dr.Directive);
             }
         }
 
-        public EventResponse AdjustVolume(Directive directive)
+        //Negative numbers are breaking this...
+        public EventResponse AdjustVolume(DirectiveRequest<AdjustVolumePayload> dr)
         {
             using (_monopriceService)
             {
-                var status = _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
-                var volume = directive.Payload.Volume ?? 0;
+                var status = _monopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
+                var volume = dr.Directive.Payload.Volume;
 
-
-                //If it is off and we set it to any volume, turn it on...
-                if (volume <= 0 && status.PowerOn)
-                    _monopriceService.SetPowerOff(directive.Endpoint.EndpointID);
-
-                //If it is on and we set it to 0 or less... turn it off...
-                if (volume > 0 && (!status.PowerOn || status.Volume <= 0))
-                    _monopriceService.SetPowerOn(directive.Endpoint.EndpointID);
-
-                //Force it to be between 0 and 100 
+                //Force the volume to be between 0 and 100 
                 volume = Math.Max(Math.Min(ConvertVolumeToAlexa(status.Volume) + volume, 100), 0);
 
+                //If it is off and we set it to any volume, turn it on...
+                if (volume == 0 && status.PowerOn)
+                    _monopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
+
+                //If it is on and we set it to 0 or less... turn it off...
+                if (volume > 0 && !status.PowerOn)
+                    _monopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
+
                 //When in doubt, change the volume...
-                _monopriceService.SetVolume(ConvertVolumeToMonoprice(volume), directive.Endpoint.EndpointID);
+                _monopriceService.SetVolume(ConvertVolumeToMonoprice(volume), dr.Directive.Endpoint.EndpointID);
 
                 //Kick it back to Alexa
-                return BuildResponse(directive);
+                return BuildResponse(dr.Directive);
             }
         }
 
-        public EventResponse Discover(Directive directive)
+        public EventResponse Discover(DirectiveRequest dr)
         {
             var response = new EventResponse
             {
                 Event = new Directive
                 {
-                    Header = directive.Header,
+                    Header = dr.Directive.Header,
                     Payload = new Payload
                     {
                         Endpoints = new[]
@@ -124,9 +127,9 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             return response;
         }
 
-        public EventResponse ReportState(Directive directive)
+        public EventResponse ReportState(DirectiveRequest dr)
         {
-            var response = BuildResponse(directive);
+            var response = BuildResponse(dr.Directive);
             //Ditch the payload
             response.Event.Payload = null;
             //Fix the header...
@@ -147,14 +150,14 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             return (int)((monopriceVolume / 38.0) * 100);
         }
 
-        private EventResponse BuildResponse(Directive directive)
+        private EventResponse BuildResponse<T>(Directive<T> directive) where T : Payload
         {
             var status =  _monopriceService.GetStatus().Single(zs => zs.Name == directive.Endpoint.EndpointID);
 
             var properties = new[]
             {
                 new ContextProperty {Namespace = "Alexa.PowerController", Name = "powerState", Value = status.PowerOn ? "ON" : "OFF"},
-                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = status.Volume.ToString()},
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = ConvertVolumeToAlexa(status.Volume).ToString()},
                 new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = status.Muted ? "true" : "false"}
             };
             

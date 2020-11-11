@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Alexa.NET.SmartHome.Domain.Constants;
+using Newtonsoft.Json;
 
 namespace Alexa.NET.SmartHome.Domain
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Alexa.NET.SmartHome.Interfaces
+namespace Alexa.NET.SmartHome.Attributes
 {
     public class AlexaNamespaceAttribute : Attribute
     {

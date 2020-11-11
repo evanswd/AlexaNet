@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.IoC;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace AlexaNet.Controllers.Alexa
 {
@@ -19,10 +22,15 @@ namespace AlexaNet.Controllers.Alexa
         }
 
         [HttpPost]
-        public async Task<EventResponse> Post(DirectiveRequest request)
+        public async Task<EventResponse> Post()
         {
+            using var reader = new StreamReader(Request.Body, Encoding.UTF8);
+            var requestJson = await reader.ReadToEndAsync();
+
+            var request = JsonConvert.DeserializeObject<DirectiveRequest>(requestJson);
+
             //Gotta decide what we are doing here...
-            return Invoker.InvokeAlexaMethod<EventResponse>(_config, request);
+            return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, requestJson);
 
             /*//If we get here, dump the input...
             using var reader = new StreamReader(Request.Body, Encoding.UTF8);

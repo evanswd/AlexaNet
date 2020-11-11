@@ -1,4 +1,6 @@
-﻿using Alexa.NET.SmartHome.Domain;
+﻿using Alexa.NET.SmartHome.Attributes;
+using Alexa.NET.SmartHome.Domain.Payloads;
+using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 
 namespace Alexa.NET.SmartHome.Interfaces
@@ -6,10 +8,10 @@ namespace Alexa.NET.SmartHome.Interfaces
     [AlexaNamespace("Alexa.Speaker")]
     public interface ISpeaker
     {
-        EventResponse SetMute(Directive directive);
+        EventResponse SetMute(DirectiveRequest<SetMutePayload> directive);
 
-        EventResponse SetVolume(Directive directive);
+        EventResponse SetVolume(DirectiveRequest<SetVolumePayload> directive);
 
-        EventResponse AdjustVolume(Directive directive);
+        EventResponse AdjustVolume(DirectiveRequest<AdjustVolumePayload> directive);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Alexa.NET.SmartHome.Domain
+namespace Alexa.NET.SmartHome.Domain.Constants
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum EqualizerBands
