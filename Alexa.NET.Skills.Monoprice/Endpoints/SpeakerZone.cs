@@ -22,6 +22,8 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                 int.Parse(config["Monoprice.TcpPort"]));
         }
 
+        #region IPowerController Handlers
+
         public EventResponse TurnOn(DirectiveRequest dr)
         {
             using (_monopriceService)
@@ -40,6 +42,10 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             }
         }
 
+        #endregion
+
+        #region ISpeaker Handlers
+
         public EventResponse SetMute(DirectiveRequest<SetMutePayload> dr)
         {
             using (_monopriceService)
@@ -57,7 +63,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                 var volume = dr.Directive.Payload.Volume;
 
                 //If it is off and we set it to any volume, turn it on...
-                if(volume <= 0 && status.PowerOn)
+                if (volume <= 0 && status.PowerOn)
                     _monopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
 
                 //If it is on and we set it to 0 or less... turn it off...
@@ -99,6 +105,10 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             }
         }
 
+        #endregion
+
+        #region IDiscovery Handlers
+
         public EventResponse Discover(DirectiveRequest dr)
         {
             var response = new EventResponse
@@ -127,6 +137,10 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             return response;
         }
 
+        #endregion
+
+        #region IReportState Handlers
+
         public EventResponse ReportState(DirectiveRequest dr)
         {
             var response = BuildResponse(dr.Directive);
@@ -137,6 +151,8 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             //Kick it back
             return response;
         }
+
+        #endregion
 
         private int ConvertVolumeToMonoprice(int alexaVolume)
         {
@@ -157,8 +173,13 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             var properties = new[]
             {
                 new ContextProperty {Namespace = "Alexa.PowerController", Name = "powerState", Value = status.PowerOn ? "ON" : "OFF"},
-                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = ConvertVolumeToAlexa(status.Volume).ToString()},
-                new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = status.Muted ? "true" : "false"}
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "volume", Value = ConvertVolumeToAlexa(status.Volume)},
+                new ContextProperty {Namespace = "Alexa.Speaker", Name = "muted", Value = status.Muted},
+                new ContextProperty {Namespace = "Alexa.EqualizerController", Name = "bands", Value = new[]
+                {
+                    new { name = EqualizerBands.BASS, value = status.Bass },
+                    new { name = EqualizerBands.TREBLE, value = status.Treble }
+                }}
             };
             
             var response = new EventResponse
@@ -201,7 +222,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                                 new Supported(EqualizerBands.BASS.ToString()),
                                 new Supported(EqualizerBands.TREBLE.ToString())
                             },
-                            Range = new EqualizerRange(-10, 10)
+                            Range = new EqualizerRange(-7, 7)
 
                         }
                     }, "bands") 

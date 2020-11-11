@@ -18,7 +18,7 @@ namespace Alexa.NET.SmartHome.Domain
         public string Name { get; set; }
 
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         [JsonProperty("timeOfSample")]
         public string TimeOfSample { get; set; }

@@ -2,8 +2,6 @@
 using System.Linq;
 using Alexa.NET.SmartHome.Attributes;
 using Alexa.NET.SmartHome.Domain;
-using Alexa.NET.SmartHome.Domain.Request;
-using Alexa.NET.SmartHome.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

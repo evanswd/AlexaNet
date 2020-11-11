@@ -14,7 +14,7 @@ namespace AlexaNet.Controllers.Alexa
     [ApiController]
     public class MonopriceSkillController : ControllerBase
     {
-        private IConfiguration _config;
+        private readonly IConfiguration _config;
 
         public MonopriceSkillController(IConfiguration config)
         {
@@ -26,26 +26,14 @@ namespace AlexaNet.Controllers.Alexa
         {
             using var reader = new StreamReader(Request.Body, Encoding.UTF8);
             var requestJson = await reader.ReadToEndAsync();
+            //Debug Dump if needed:
+            //await System.IO.File.WriteAllTextAsync(DateTime.Now.Ticks + "_monoprice_skill.log", requestJson);
 
+            //Fetch the inbound request to parse it...
             var request = JsonConvert.DeserializeObject<DirectiveRequest>(requestJson);
 
             //Gotta decide what we are doing here...
             return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, requestJson);
-
-            /*//If we get here, dump the input...
-            using var reader = new StreamReader(Request.Body, Encoding.UTF8);
-            var x = await reader.ReadToEndAsync();
-            await System.IO.File.WriteAllTextAsync(DateTime.Now.Ticks + "_skill.log", x);
-            
-            return new EventResponse();*/
-
-
-            /*if (input?.Directive?.Header?.Namespace == "Alexa.Discovery")
-                return ResponseBuilder.Tell($"It's working baby! {input.Directive.Header.Name}");
-            else return ResponseBuilder.Tell("It still works!");*/
-
-            /*System.IO.File.WriteAllText(DateTime.Now.Ticks + "_skill.log", JsonConvert.SerializeObject(input.Directive));
-            return "";*/
         }
     }
 }
