@@ -30,7 +30,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
         public void SetPowerOn(string zone)
         {
-            SetPowerOn(int.Parse(zone.Substring(4)));
+            SetPowerOn(ParseZone(zone));
         }
 
         public void SetPowerOn(params int[] zones)
@@ -41,7 +41,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
         public void SetPowerOff(string zone)
         {
-            SetPowerOff(int.Parse(zone.Substring(4)));
+            SetPowerOff(ParseZone(zone));
         }
 
         public void SetPowerOff(params int[] zones)
@@ -52,7 +52,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
         public void SetMute(bool mute, string zone)
         {
-            SetMute(mute, int.Parse(zone.Substring(4)));
+            SetMute(mute, ParseZone(zone));
         }
 
         public void SetMute(bool mute, params int[] zones)
@@ -63,7 +63,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
         public void SetVolume(int volume, string zone)
         {
-            SetVolume(volume, int.Parse(zone.Substring(4)));
+            SetVolume(volume, ParseZone(zone));
         }
 
         public void SetVolume(int volume, params int[] zones)
@@ -76,6 +76,11 @@ namespace Alexa.NET.Skills.Monoprice.Service
                 _conn.WriteData($"<1{zone}VO{volumeStr}");
         }
 
+        public void SetSource(int source, string zone)
+        {
+            SetSource(source, ParseZone(zone));
+        }
+
         public void SetSource(int source, params int[] zones)
         {
             if (source < 1 || source > 6)
@@ -84,6 +89,11 @@ namespace Alexa.NET.Skills.Monoprice.Service
             var sourceStr = source.ToString("D2");
             foreach (var zone in zones)
                 _conn.WriteData($"<1{zone}CH{sourceStr}");
+        }
+
+        public void SetBalance(int balance, string zone)
+        {
+            SetBalance(balance, ParseZone(zone));
         }
 
         public void SetBalance(int balance, params int[] zones)
@@ -96,6 +106,11 @@ namespace Alexa.NET.Skills.Monoprice.Service
                 _conn.WriteData($"<1{zone}BL{balanceStr}");
         }
 
+        public void SetBass(int bass, string zone)
+        {
+            SetBass(bass, ParseZone(zone));
+        }
+
         public void SetBass(int bass, params int[] zones)
         {
             if (bass < 0 || bass > 14)
@@ -106,6 +121,11 @@ namespace Alexa.NET.Skills.Monoprice.Service
                 _conn.WriteData($"<1{zone}BS{balanceStr}");
         }
 
+        public void SetTreble(int treble, string zone)
+        {
+            SetTreble(treble, ParseZone(zone));
+        }
+
         public void SetTreble(int treble, params int[] zones)
         {
             if (treble < 0 || treble > 14)
@@ -114,6 +134,11 @@ namespace Alexa.NET.Skills.Monoprice.Service
             var balanceStr = treble.ToString("D2");
             foreach (var zone in zones)
                 _conn.WriteData($"<1{zone}TR{balanceStr}");
+        }
+
+        private int ParseZone(string zone)
+        {
+            return int.Parse(zone.Substring(4));
         }
     }
 }
