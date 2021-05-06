@@ -11,7 +11,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace Alexa.NET.Skills.Monoprice.Endpoints
 {
-    public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState, IPowerController, ISpeaker, IEqualizerController
+    public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState, 
+        IPowerController, ISpeaker, IEqualizerController
     {
         private MonopriceService _mpService;
 
