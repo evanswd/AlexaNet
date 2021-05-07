@@ -13,7 +13,7 @@ exports.handler = async (event, context, callback) => {
     const response = await new Promise((resolve, reject) => {
         
         const options = {
-            hostname: 'alexanet.libertyfoxtech.com',
+            hostname: 'oxford-manor.azurewebsites.net',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
