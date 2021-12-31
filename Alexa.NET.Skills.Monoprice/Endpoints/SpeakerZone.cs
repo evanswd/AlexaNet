@@ -21,7 +21,8 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
             get 
             { 
                 return _mpService ??= new MonopriceService(Config["Monoprice.IpAddress"],
-                int.Parse(Config["Monoprice.TcpPort"]));
+                int.Parse(Config["Monoprice.TcpPortController1"]),
+                int.Parse(Config["Monoprice.TcpPortController2"]));
             }
         }
 
@@ -204,7 +205,9 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                             GenerateSpeakerEndpoint("Zone3","Office Speakers"),
                             GenerateSpeakerEndpoint("Zone4","Master Bedroom Speakers"),
                             GenerateSpeakerEndpoint("Zone5","Patio Speakers"),
-                            GenerateSpeakerEndpoint("Zone6","Pool Speakers")
+                            GenerateSpeakerEndpoint("Zone6","Pool Speakers"),
+                            GenerateSpeakerEndpoint("Zone7","Master Bathroom Speakers"),
+                            GenerateSpeakerEndpoint("Zone8","Guest Bathroom Speakers")
                         }
                     }
                 }

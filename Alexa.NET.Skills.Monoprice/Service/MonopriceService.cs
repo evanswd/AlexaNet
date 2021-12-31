@@ -7,25 +7,41 @@ namespace Alexa.NET.Skills.Monoprice.Service
 {
     public class MonopriceService : IDisposable
     {
-        private readonly TcpPortConnection _conn;
+        private readonly TcpPortConnection[] _conns;
 
-        public MonopriceService(string ipAddress, int tcpPort)
+        public MonopriceService(string ipAddress, params int[] tcpPorts)
         {
-            _conn = new TcpPortConnection(ipAddress, tcpPort);
-            _conn.OpenConnection();
+            _conns = new TcpPortConnection[tcpPorts.Length];
+            for (var i = 0; i < tcpPorts.Length; i++)
+            {
+                _conns[i] = new TcpPortConnection(ipAddress, tcpPorts[i]);
+                _conns[i].OpenConnection();
+            }
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
-            _conn.Dispose();
-        }
+            foreach (var tcpPortConnection in _conns)
+                tcpPortConnection.Dispose();
 
+        }
 
         public List<ZoneStatus> GetStatus()
         {
-            var res = _conn.WriteData("?10", 6);
-            var lines = res.Split(new[] {"\r\n"}, StringSplitOptions.None);
-            return lines.Skip(1).Take(6).Select(line => new ZoneStatus(line)).ToList();
+            var result = new List<ZoneStatus>();
+
+            foreach (var conn in _conns)
+            {
+                var res = conn.WriteData("?10", 6);
+                var lines = res.Split(new[] { "\r\n" }, StringSplitOptions.None);
+                result.AddRange(lines.Skip(1).Take(6).Select(line => new ZoneStatus(line)));
+            }
+
+            //TODO: Clean this up later, but some quick-and-dirty to clean-up zone names...
+            for (var i = 0; i < result.Count; i++)
+                result[i].Name = $"Zone{i + 1}";
+
+            return result;
         }
 
         public void SetPowerOn(string zone)
@@ -36,7 +52,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
         public void SetPowerOn(params int[] zones)
         {
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}PR01");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}PR01");
         }
 
         public void SetPowerOff(string zone)
@@ -47,7 +63,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
         public void SetPowerOff(params int[] zones)
         {
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}PR00");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}PR00");
         }
 
         public void SetMute(bool mute, string zone)
@@ -58,7 +74,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
         public void SetMute(bool mute, params int[] zones)
         {
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}MU0" + (mute ? "1" : "0"));
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}MU0" + (mute ? "1" : "0"));
         }
 
         public void SetVolume(int volume, string zone)
@@ -73,7 +89,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
             var volumeStr = volume.ToString("D2");
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}VO{volumeStr}");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}VO{volumeStr}");
         }
 
         public void SetSource(int source, string zone)
@@ -88,7 +104,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
             var sourceStr = source.ToString("D2");
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}CH{sourceStr}");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}CH{sourceStr}");
         }
 
         public void SetBalance(int balance, string zone)
@@ -103,7 +119,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
             var balanceStr = balance.ToString("D2");
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}BL{balanceStr}");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}BL{balanceStr}");
         }
 
         public void SetBass(int bass, string zone)
@@ -118,7 +134,7 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
             var balanceStr = bass.ToString("D2");
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}BS{balanceStr}");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}BS{balanceStr}");
         }
 
         public void SetTreble(int treble, string zone)
@@ -133,12 +149,22 @@ namespace Alexa.NET.Skills.Monoprice.Service
 
             var balanceStr = treble.ToString("D2");
             foreach (var zone in zones)
-                _conn.WriteData($"<1{zone}TR{balanceStr}");
+                _conns[GetControllerByZone(zone)].WriteData($"<1{GetZoneForController(zone)}TR{balanceStr}");
         }
 
         private int ParseZone(string zone)
         {
             return int.Parse(zone.Substring(4));
+        }
+
+        private int GetControllerByZone(int zone)
+        {
+            return (zone - 1) / 6;
+        }
+
+        private int GetZoneForController(int zone)
+        {
+            return ((zone - 1) % 6) + 1;
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alexa.NET.Skills.Monoprice.Service;
 using AlexaNet.Infrastructure.Services.Denon;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -44,22 +45,24 @@ namespace AlexaNet.Controllers
         [Route("SoundOff")]
         public void SoundOff()
         {
-            using var svc = new HeosService("192.168.1.21");
-            svc.SetPowerOff();
+            //using var svc = new HeosService("192.168.1.21");
+            //svc.SetPowerOff();
 
-            //using var svc = new MonopriceService(_config["Monoprice.IpAddress"], int.Parse(_config["Monoprice.TcpPort"]));
-            //svc.SetPowerOff(3);
+            using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
+                int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
+            svc.SetPowerOff(8);
         }
 
         [HttpGet]
         [Route("SoundOn")]
         public void SoundOn()
         {
-            using var svc = new HeosService("192.168.1.21");
-            svc.SetPowerOn();
+            //using var svc = new HeosService("192.168.1.21");
+            //svc.SetPowerOn();
             
-            //using var svc = new MonopriceService(_config["Monoprice.IpAddress"], int.Parse(_config["Monoprice.TcpPort"]));
-            //svc.SetPowerOn(3);
+            using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
+                int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
+            svc.SetPowerOn(8);
         }
     }
 }

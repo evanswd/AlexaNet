@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Alexa.NET.SmartHome.Utilities
 {
@@ -11,6 +12,7 @@ namespace Alexa.NET.SmartHome.Utilities
         private readonly int _port;
         private readonly Socket _clientSocket;
         private readonly object _lock = new object();
+        private const int SleepTime = 50; //ms
 
         public TcpPortConnection(string ipAddress, int port)
         {
@@ -56,6 +58,10 @@ namespace Alexa.NET.SmartHome.Utilities
                     //Timeout reached
                 }
             }
+
+            //If we're not expecting anything back, give it some breathing room for the next command.
+            if(expectedLinesOfResponse == 0)
+                Thread.Sleep(SleepTime);
 
             //Ditch the # deliminator
             var response = sb.ToString().Replace("#", "");  // at this point you should have all the data that

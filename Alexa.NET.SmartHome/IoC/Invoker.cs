@@ -15,6 +15,7 @@ namespace Alexa.NET.SmartHome.IoC
                 throw new ArgumentException("The Amazon Alexa Directive must be specified.");
 
             //TODO: Force AbstractAlexaInterface
+            //TODO: This doesn't enforce the specific AlexaNamespace... just that it has one...
             var types = from t in ReflectionUtils.GetAllReferencedTypes()
                 where t.IsClass && !t.IsAbstract && t.GetInterfaces()
                     .Any(i => i.GetCustomAttributes(typeof(AlexaNamespaceAttribute), true).Length > 0)
@@ -26,7 +27,7 @@ namespace Alexa.NET.SmartHome.IoC
 
                 if (method != null)
                 {
-                    //TODO: Do this better
+                    //TODO: Do this better... how to handle multiple classes? This only handles the first one that comes back...
                     var paramType = method.GetParameters()[0].ParameterType;
 
                     var magicConstructor = type.GetConstructor(new[] {typeof(IConfiguration), typeof(string)});
