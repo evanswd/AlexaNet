@@ -281,21 +281,21 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                 DisplayCategories = new[] {DisplayCategories.SPEAKER},
                 Capabilities = new[]
                 {
-                    //new Capability("Alexa"), 
+                    new Capability("Alexa"), 
                     new Capability("Alexa.Speaker", null, "volume", "muted"),
-                    new Capability("Alexa.PowerController", null, "powerState"),
-                    new Capability("Alexa.EqualizerController", new Configuration
-                    {
-                        Bands = new EqualizerBand
-                        {
-                            Supported = new[] {
-                                new Supported(EqualizerBands.BASS.ToString()),
-                                new Supported(EqualizerBands.TREBLE.ToString())
-                            },
-                            Range = new EqualizerRange(-7, 7)
+                    new Capability("Alexa.PowerController", null, "powerState")
+                    //new Capability("Alexa.EqualizerController", new Configuration
+                    //{
+                    //    Bands = new EqualizerBand
+                    //    {
+                    //        Supported = new[] {
+                    //            new Supported(EqualizerBands.BASS.ToString()),
+                    //            new Supported(EqualizerBands.TREBLE.ToString())
+                    //        },
+                    //        Range = new EqualizerRange(-7, 7)
 
-                        }
-                    }, "bands") 
+                    //    }
+                    //}, "bands") 
                 }
             };
         }
