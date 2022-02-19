@@ -1,12 +1,12 @@
-﻿using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Alexa.NET.SmartHome.Domain.Request;
+﻿using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.IoC;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AlexaNet.Controllers.Alexa
 {

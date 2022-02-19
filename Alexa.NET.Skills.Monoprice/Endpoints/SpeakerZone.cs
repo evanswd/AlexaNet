@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-using Alexa.NET.Skills.Monoprice.Service;
+﻿using Alexa.NET.Skills.Monoprice.Service;
+using Alexa.NET.SmartHome.Attributes;
 using Alexa.NET.SmartHome.Domain;
 using Alexa.NET.SmartHome.Domain.Constants;
 using Alexa.NET.SmartHome.Domain.Payloads;
@@ -8,25 +7,28 @@ using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.Interfaces;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Linq;
 
 namespace Alexa.NET.Skills.Monoprice.Endpoints
 {
-    public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState, 
+    [RequiresLock]
+    public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
         IPowerController, ISpeaker, IEqualizerController
     {
         private MonopriceService _mpService;
 
         private MonopriceService MonopriceService
         {
-            get 
-            { 
+            get
+            {
                 return _mpService ??= new MonopriceService(Config["Monoprice.IpAddress"],
                 int.Parse(Config["Monoprice.TcpPortController1"]),
                 int.Parse(Config["Monoprice.TcpPortController2"]));
             }
         }
 
-        public SpeakerZone(IConfiguration config, string alexaNamespace) 
+        public SpeakerZone(IConfiguration config, string alexaNamespace)
             : base(config, alexaNamespace) { }
 
         #region IPowerController Handlers
@@ -124,8 +126,8 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
 
         public EventResponse SetBands(DirectiveRequest<SetBandsPayload> dr)
         {
-            if(dr.Directive.Payload.Bands.Any(b => b.Name == EqualizerBands.MIDRANGE))
-                return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE, 
+            if (dr.Directive.Payload.Bands.Any(b => b.Name == EqualizerBands.MIDRANGE))
+                return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE,
                     "The speaker does not support mid range.");
 
             using (MonopriceService)
@@ -145,7 +147,7 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
         public EventResponse AdjustBands(DirectiveRequest<AdjustBandsPayload> dr)
         {
             if (dr.Directive.Payload.Bands.Any(b => b.Name == EqualizerBands.MIDRANGE))
-                return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE, 
+                return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE,
                     "The speaker does not support mid range.");
 
             using (MonopriceService)
@@ -266,8 +268,8 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                     new { name = EqualizerBands.TREBLE, value = status.Treble }
                 }}
             };
-            
-            return BuildResponse(directive, new Context {Properties = properties});
+
+            return BuildResponse(directive, new Context { Properties = properties });
         }
 
         private Endpoint GenerateSpeakerEndpoint(string endpointID, string friendlyName)
@@ -278,10 +280,10 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints
                 ManufacturerName = "Monoprice",
                 Description = "Not-so-smart Speaker by Bill Evans",
                 FriendlyName = friendlyName,
-                DisplayCategories = new[] {DisplayCategories.SPEAKER},
+                DisplayCategories = new[] { DisplayCategories.SPEAKER },
                 Capabilities = new[]
                 {
-                    new Capability("Alexa"), 
+                    new Capability("Alexa"),
                     new Capability("Alexa.Speaker", null, "volume", "muted"),
                     new Capability("Alexa.PowerController", null, "powerState")
                     //new Capability("Alexa.EqualizerController", new Configuration
