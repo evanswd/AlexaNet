@@ -1,6 +1,7 @@
 ﻿using Alexa.NET.SmartHome.Attributes;
 using Alexa.NET.SmartHome.Domain;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -12,8 +13,11 @@ namespace Alexa.NET.SmartHome.IoC
         //Used if the 
         private static readonly object LockObject = new();
 
-        public static T InvokeAlexaMethod<T>(IConfiguration config, Header directiveHeader, string requestJson)
+        public static T InvokeAlexaMethod<T>(IConfiguration config, Header directiveHeader, string requestJson, ILogger logger)
         {
+            logger.LogWarning($"Got a request for {directiveHeader.Namespace} to complete {directiveHeader.Name} action.");
+            logger.LogWarning(requestJson);
+
             if (directiveHeader == null)
                 throw new ArgumentException("The Amazon Alexa Directive must be specified.");
 
@@ -40,13 +44,21 @@ namespace Alexa.NET.SmartHome.IoC
                 if (type.GetCustomAttributes(typeof(RequiresLockAttribute), true).Length > 0)
                     lock (LockObject)
                     {
+                        logger.LogWarning($"{type.FullName}.{method.Name} is requiring a lock.");
                         var magicClassObject = magicConstructor.Invoke(new object[] { config, directiveHeader.Namespace });
-                        return (T)method.Invoke(magicClassObject, new[] { JsonConvert.DeserializeObject(requestJson, paramType) });
+                        var result = (T)method.Invoke(magicClassObject, new[] { JsonConvert.DeserializeObject(requestJson, paramType) });
+                        logger.LogWarning($"Finished Execution for {directiveHeader.Namespace} to complete {directiveHeader.Name} action.");
+                        logger.LogWarning(JsonConvert.SerializeObject(result));
+                        return result;
                     }
                 else
                 {
+                    logger.LogWarning($"{type.FullName}.{method.Name} is NOT requiring a lock.");
                     var magicClassObject = magicConstructor.Invoke(new object[] { config, directiveHeader.Namespace });
-                    return (T)method.Invoke(magicClassObject, new[] { JsonConvert.DeserializeObject(requestJson, paramType) });
+                    var result = (T)method.Invoke(magicClassObject, new[] { JsonConvert.DeserializeObject(requestJson, paramType) });
+                    logger.LogWarning($"Finished Execution for {directiveHeader.Namespace} to complete {directiveHeader.Name} action.");
+                    logger.LogWarning(JsonConvert.SerializeObject(result));
+                    return result;
                 }
             }
 

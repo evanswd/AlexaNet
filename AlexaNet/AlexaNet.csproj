@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="Alexa.NET" Version="1.20.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 

@@ -3,6 +3,7 @@ using Alexa.NET.SmartHome.Domain.Response;
 using Alexa.NET.SmartHome.IoC;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text;
@@ -15,10 +16,13 @@ namespace AlexaNet.Controllers.Alexa
     public class MonopriceSkillController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly ILogger<MonopriceSkillController> _logger;
 
-        public MonopriceSkillController(IConfiguration config)
+
+        public MonopriceSkillController(IConfiguration config, ILogger<MonopriceSkillController> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -33,7 +37,7 @@ namespace AlexaNet.Controllers.Alexa
             var request = JsonConvert.DeserializeObject<DirectiveRequest>(requestJson);
 
             //Gotta decide what we are doing here...
-            return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, requestJson);
+            return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, requestJson, _logger);
         }
     }
 }
