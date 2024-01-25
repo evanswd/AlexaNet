@@ -6,15 +6,15 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 
-namespace Alexa.NET.SmartHome.IoC
-{
-    public static class Invoker
-    {
-        //Used if the 
-        private static readonly object LockObject = new();
+namespace Alexa.NET.SmartHome.IoC;
 
-        public static T InvokeAlexaMethod<T>(IConfiguration config, Header directiveHeader, string requestJson, ILogger logger)
-        {
+public static class Invoker
+{
+    //Used if the 
+    private static readonly object LockObject = new();
+
+    public static T InvokeAlexaMethod<T>(IConfiguration config, Header directiveHeader, string requestJson, ILogger logger)
+    {
             logger.LogWarning($"Got a request for {directiveHeader.Namespace} to complete {directiveHeader.Name} action.");
             logger.LogWarning(requestJson);
 
@@ -64,5 +64,4 @@ namespace Alexa.NET.SmartHome.IoC
 
             throw new NotImplementedException($"This skill does not have a handler for the {directiveHeader.Namespace} {directiveHeader.Name} handler.");
         }
-    }
 }

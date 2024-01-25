@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30608.117
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlexaNet", "AlexaNet\AlexaNet.csproj", "{57D8AC2A-5B86-4480-A2FE-C84ABC1C83EB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alexa.NET.SmartHome", "Alexa.NET.SmartHome\Alexa.NET.SmartHome.csproj", "{B9D6B9AF-AE29-4A7B-A395-304DD263E5DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alexa.NET.Skills.Monoprice", "Alexa.NET.Skills.Monoprice\Alexa.NET.Skills.Monoprice.csproj", "{AA0807AF-0C29-4646-BB5C-45922813F22A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alexa.NET.Skills.Monoprice", "Alexa.NET.Skills.Monoprice\Alexa.NET.Skills.Monoprice.csproj", "{AA0807AF-0C29-4646-BB5C-45922813F22A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alexa.NET.Skills.Insteon", "Alexa.NET.Skills.Insteon\Alexa.NET.Skills.Insteon.csproj", "{B21B9B7F-92CD-4BC7-B74B-64306E1C2702}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Skills", "Skills", "{604E2C2A-4E4C-4D7A-851C-1D3B1EC5948F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +31,17 @@ Global
 		{AA0807AF-0C29-4646-BB5C-45922813F22A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA0807AF-0C29-4646-BB5C-45922813F22A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA0807AF-0C29-4646-BB5C-45922813F22A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B21B9B7F-92CD-4BC7-B74B-64306E1C2702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B21B9B7F-92CD-4BC7-B74B-64306E1C2702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B21B9B7F-92CD-4BC7-B74B-64306E1C2702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B21B9B7F-92CD-4BC7-B74B-64306E1C2702}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AA0807AF-0C29-4646-BB5C-45922813F22A} = {604E2C2A-4E4C-4D7A-851C-1D3B1EC5948F}
+		{B21B9B7F-92CD-4BC7-B74B-64306E1C2702} = {604E2C2A-4E4C-4D7A-851C-1D3B1EC5948F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {224DA415-F1D2-4E88-B803-BA64C579CD2B}

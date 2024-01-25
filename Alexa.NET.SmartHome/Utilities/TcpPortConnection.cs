@@ -4,25 +4,25 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Alexa.NET.SmartHome.Utilities
-{
-    public class TcpPortConnection : IConnection
-    {
-        private readonly string _ipAddress;
-        private readonly int _port;
-        private readonly Socket _clientSocket;
-        private readonly object _lock = new object();
-        private const int SleepTime = 50; //ms
+namespace Alexa.NET.SmartHome.Utilities;
 
-        public TcpPortConnection(string ipAddress, int port)
-        {
+public class TcpPortConnection : IConnection
+{
+    private readonly string _ipAddress;
+    private readonly int _port;
+    private readonly Socket _clientSocket;
+    private readonly object _lock = new object();
+    private const int SleepTime = 50; //ms
+
+    public TcpPortConnection(string ipAddress, int port)
+    {
             _ipAddress = ipAddress;
             _port = port;
             _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) {ReceiveTimeout = 500};
         }
 
-        public string OpenConnection()
-        {
+    public string OpenConnection()
+    {
             lock (_lock)
             {
                 if (!_clientSocket.Connected)
@@ -32,8 +32,8 @@ namespace Alexa.NET.SmartHome.Utilities
             return null;
         }
 
-        public string WriteData(string data, int expectedLinesOfResponse = 0)
-        {
+    public string WriteData(string data, int expectedLinesOfResponse = 0)
+    {
             var match = new Regex("\\r\\n");
             var sb = new StringBuilder();
             lock (_lock)
@@ -70,11 +70,10 @@ namespace Alexa.NET.SmartHome.Utilities
             return response;
         }
 
-        public void Dispose()
-        {
+    public void Dispose()
+    {
             //_clientSocket.Disconnect(true);
             //_clientSocket.Close();
             _clientSocket.Dispose();
         }
-    }
 }

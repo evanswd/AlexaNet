@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace AlexaNet.Infrastructure.Services
+namespace AlexaNet.Infrastructure.Services;
+
+public interface IService : IDisposable
 {
-    public interface IService : IDisposable
-    {
-    }
 }

@@ -9,35 +9,34 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlexaNet.Controllers.Alexa
+namespace AlexaNet.Controllers.Alexa;
+
+[Route("Alexa/[controller]")]
+[ApiController]
+public class MonopriceSkillController : ControllerBase
 {
-    [Route("Alexa/[controller]")]
-    [ApiController]
-    public class MonopriceSkillController : ControllerBase
+    private readonly IConfiguration _config;
+    private readonly ILogger<MonopriceSkillController> _logger;
+
+
+    public MonopriceSkillController(IConfiguration config, ILogger<MonopriceSkillController> logger)
     {
-        private readonly IConfiguration _config;
-        private readonly ILogger<MonopriceSkillController> _logger;
+        _config = config;
+        _logger = logger;
+    }
 
+    [HttpPost]
+    public async Task<EventResponse> Post()
+    {
+        using var reader = new StreamReader(Request.Body, Encoding.UTF8);
+        var requestJson = await reader.ReadToEndAsync();
+        //Debug Dump if needed:
+        //await System.IO.File.WriteAllTextAsync(DateTime.Now.Ticks + "_monoprice_skill.log", requestJson);
 
-        public MonopriceSkillController(IConfiguration config, ILogger<MonopriceSkillController> logger)
-        {
-            _config = config;
-            _logger = logger;
-        }
+        //Fetch the inbound request to parse it...
+        var request = JsonConvert.DeserializeObject<DirectiveRequest>(requestJson);
 
-        [HttpPost]
-        public async Task<EventResponse> Post()
-        {
-            using var reader = new StreamReader(Request.Body, Encoding.UTF8);
-            var requestJson = await reader.ReadToEndAsync();
-            //Debug Dump if needed:
-            //await System.IO.File.WriteAllTextAsync(DateTime.Now.Ticks + "_monoprice_skill.log", requestJson);
-
-            //Fetch the inbound request to parse it...
-            var request = JsonConvert.DeserializeObject<DirectiveRequest>(requestJson);
-
-            //Gotta decide what we are doing here...
-            return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, requestJson, _logger);
-        }
+        //Gotta decide what we are doing here...
+        return Invoker.InvokeAlexaMethod<EventResponse>(_config, request?.Directive?.Header, requestJson, _logger);
     }
 }

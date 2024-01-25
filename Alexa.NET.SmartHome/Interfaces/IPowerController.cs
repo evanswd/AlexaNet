@@ -2,13 +2,12 @@
 using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 
-namespace Alexa.NET.SmartHome.Interfaces
-{
-    [AlexaNamespace("Alexa.PowerController")]
-    public interface IPowerController
-    {
-        EventResponse TurnOn(DirectiveRequest directive);
+namespace Alexa.NET.SmartHome.Interfaces;
 
-        EventResponse TurnOff(DirectiveRequest directive);
-    }
+[AlexaNamespace("Alexa.PowerController")]
+public interface IPowerController
+{
+    EventResponse TurnOn(DirectiveRequest directive);
+
+    EventResponse TurnOff(DirectiveRequest directive);
 }

@@ -2,11 +2,10 @@
 using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 
-namespace Alexa.NET.SmartHome.Interfaces
+namespace Alexa.NET.SmartHome.Interfaces;
+
+[AlexaNamespace("Alexa.Discovery")]
+public interface IDiscovery
 {
-    [AlexaNamespace("Alexa.Discovery")]
-    public interface IDiscovery
-    {
-        EventResponse Discover(DirectiveRequest directive);
-    }
+    EventResponse Discover(DirectiveRequest directive);
 }

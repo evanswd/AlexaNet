@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Alexa.NET.SmartHome.Domain.Constants
+namespace Alexa.NET.SmartHome.Domain.Constants;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum LevelDirection
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum LevelDirection
-    {
-        DOWN,
-        UP
-    }
+    DOWN,
+    UP
 }

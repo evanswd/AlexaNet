@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace Alexa.NET.SmartHome.Attributes
-{
-    public class AlexaNamespaceAttribute : Attribute
-    {
-        public readonly string Namespace;
+namespace Alexa.NET.SmartHome.Attributes;
 
-        public AlexaNamespaceAttribute(string nameSpace)
-        {
+public class AlexaNamespaceAttribute : Attribute
+{
+    public readonly string Namespace;
+
+    public AlexaNamespaceAttribute(string nameSpace)
+    {
             Namespace = nameSpace;
         }
-    }
 }

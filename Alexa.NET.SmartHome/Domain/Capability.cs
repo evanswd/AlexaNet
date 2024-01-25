@@ -1,40 +1,40 @@
 ﻿using System.Linq;
 using Newtonsoft.Json;
 
-namespace Alexa.NET.SmartHome.Domain
+namespace Alexa.NET.SmartHome.Domain;
+
+[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
+public class Capability
 {
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class Capability
+    [JsonProperty("type")]
+    public string Type { get; private set; }
+
+    [JsonProperty("interface")]
+    public string Interface { get; set; }
+
+    [JsonProperty("instance")]
+    public string Instance { get; set; }
+
+    [JsonProperty("version")]
+    public string Version { get; private set; }
+
+    [JsonProperty("properties")]
+    public Properties Properties { get; set; }
+
+    [JsonProperty("configurations")]
+    public Configuration Configurations { get; set; }
+
+    //[JsonProperty("capabilityResources")]
+    //public CapabilityResources CapabilityResources { get; set; }
+
+    //[JsonProperty("semantics")]
+    //public Semantics Semantics { get; set; }
+
+    //[JsonProperty("verificationsRequired")]
+    //public VerificationsRequired[] VerificationsRequired { get; set; }
+
+    public Capability(string alexaInterface, Configuration configurations = null, params string[] supported)
     {
-        [JsonProperty("type")]
-        public string Type { get; private set; }
-
-        [JsonProperty("interface")]
-        public string Interface { get; set; }
-
-        [JsonProperty("instance")]
-        public string Instance { get; set; }
-
-        [JsonProperty("version")]
-        public string Version { get; private set; }
-
-        [JsonProperty("properties")]
-        public Properties Properties { get; set; }
-
-        [JsonProperty("configurations")]
-        public Configuration Configurations { get; set; }
-
-        //[JsonProperty("capabilityResources")]
-        //public CapabilityResources CapabilityResources { get; set; }
-
-        //[JsonProperty("semantics")]
-        //public Semantics Semantics { get; set; }
-
-        //[JsonProperty("verificationsRequired")]
-        //public VerificationsRequired[] VerificationsRequired { get; set; }
-
-        public Capability(string alexaInterface, Configuration configurations = null, params string[] supported)
-        {
             Type = "AlexaInterface";
             Version = "3";
             Interface = alexaInterface;
@@ -47,5 +47,4 @@ namespace Alexa.NET.SmartHome.Domain
                 };
             Configurations = configurations;
         }
-    }
 }

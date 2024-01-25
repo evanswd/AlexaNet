@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace Alexa.NET.SmartHome.Domain.Payloads
+namespace Alexa.NET.SmartHome.Domain.Payloads;
+
+public class SetVolumePayload : Payload
 {
-    public class SetVolumePayload : Payload
-    {
-        [JsonProperty("volume")]
-        public int Volume { get; set; }
-    }
+    [JsonProperty("volume")]
+    public int Volume { get; set; }
 }

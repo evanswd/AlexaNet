@@ -2,11 +2,10 @@
 using Alexa.NET.SmartHome.Domain.Request;
 using Alexa.NET.SmartHome.Domain.Response;
 
-namespace Alexa.NET.SmartHome.Interfaces
+namespace Alexa.NET.SmartHome.Interfaces;
+
+[AlexaNamespace("Alexa")]
+public interface IReportState
 {
-    [AlexaNamespace("Alexa")]
-    public interface IReportState
-    {
-        EventResponse ReportState(DirectiveRequest directive);
-    }
+    EventResponse ReportState(DirectiveRequest directive);
 }

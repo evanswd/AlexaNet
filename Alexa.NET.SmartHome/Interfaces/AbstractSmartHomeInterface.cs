@@ -4,21 +4,21 @@ using Alexa.NET.SmartHome.Domain.Payloads;
 using Alexa.NET.SmartHome.Domain.Response;
 using Microsoft.Extensions.Configuration;
 
-namespace Alexa.NET.SmartHome.Interfaces
-{
-    public abstract class AbstractSmartHomeInterface
-    {
-        protected IConfiguration Config;
-        protected readonly string AlexaNamespace;
+namespace Alexa.NET.SmartHome.Interfaces;
 
-        public AbstractSmartHomeInterface(IConfiguration config, string alexaNamespace)
-        {
+public abstract class AbstractSmartHomeInterface
+{
+    protected IConfiguration Config;
+    protected readonly string AlexaNamespace;
+
+    public AbstractSmartHomeInterface(IConfiguration config, string alexaNamespace)
+    {
             Config = config;
             AlexaNamespace = alexaNamespace;
         }
 
-        protected EventResponse BuildResponse<T>(Directive<T> directive, Context context) where T : Payload
-        {
+    protected EventResponse BuildResponse<T>(Directive<T> directive, Context context) where T : Payload
+    {
             var response = new EventResponse
             {
                 Event = new Directive
@@ -37,8 +37,8 @@ namespace Alexa.NET.SmartHome.Interfaces
             return response;
         }
 
-        protected EventResponse BuildErrorResponse<T>(Directive<T> directive, ErrorTypes errorType, string message) where T : Payload
-        {
+    protected EventResponse BuildErrorResponse<T>(Directive<T> directive, ErrorTypes errorType, string message) where T : Payload
+    {
             var response = new EventResponse
             {
                 Event = new Directive
@@ -55,5 +55,4 @@ namespace Alexa.NET.SmartHome.Interfaces
             response.Event.Header.Name = "ErrorResponse";
             return response;
         }
-    }
 }
