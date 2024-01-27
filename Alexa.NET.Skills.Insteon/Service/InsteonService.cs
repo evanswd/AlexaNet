@@ -44,4 +44,31 @@ public class InsteonService(string url, string username, string password)
     }
 
     #endregion
+
+    #region Device Commands
+
+    public async Task SendDeviceCommand(string deviceId, byte cmd1, byte cmd2)
+    {
+        await SendDeviceCommand(new CommandRequest(deviceId, cmd1, cmd2));
+    }
+
+    public async Task SendDeviceCommand(CommandRequest request)
+    {
+        var client = new HttpClient();
+
+        // Add Basic Authentication headers
+        var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
+        client.DefaultRequestHeaders.Authorization = authHeader;
+
+        var cmdUrl = url + $"/3?0262{request.DeviceId}{request.MsgFlag:X2}{request.Cmd1:X2}{request.Cmd2:X2}";
+        if (request.ExtendedData != null)
+        {
+            cmdUrl += BitConverter.ToString(request.ExtendedData).Replace("-", "");
+        }
+        cmdUrl += "=I=3";
+
+        await client.GetAsync(cmdUrl);
+    }
+
+    #endregion
 }
