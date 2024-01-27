@@ -13,7 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alexa.NET.Skills.Insteon", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Skills", "Skills", "{604E2C2A-4E4C-4D7A-851C-1D3B1EC5948F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlexaNet.Tests", "AlexaNet.Tests\AlexaNet.Tests.csproj", "{393175C0-9A2B-42F6-95D2-19843608B64C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlexaNet.Tests", "AlexaNet.Tests\AlexaNet.Tests.csproj", "{393175C0-9A2B-42F6-95D2-19843608B64C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1C41D315-DA13-47A7-9808-29145E155749}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

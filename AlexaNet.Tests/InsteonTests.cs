@@ -1,7 +1,4 @@
-// Ignore Spelling: Insteon
-
 using Alexa.NET.Skills.Insteon.Service;
-using Alexa.NET.Skills.Insteon.Service.Models.Request;
 using Microsoft.Extensions.Configuration;
 
 namespace AlexaNet.Tests;
@@ -21,14 +18,11 @@ public class InsteonTests
     public void InsteonStatusTest()
     {
         var configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json")
+            .AddJsonFile("appSettings.json")
             .Build();
 
-        var auth = $"{configuration["Authentication:Username"]}:{configuration["Authentication:Password"]}";
-
-        var svc = new InsteonService(_url, auth);
-        var status = svc.GetDeviceStatus(new StatusRequest("282C7A", "19")).Result;
-        var percentage = (int)Math.Round(status.OnLevel / 255.0 * 100);
-        Console.WriteLine("The light is currently at: " + percentage + "%");
+        var svc = new InsteonService(_url, configuration["Authentication:Username"]!, configuration["Authentication:Password"]!);
+        var status = svc.GetLightStatus("282C7A").Result;
+        Console.WriteLine(status);
     }
 }

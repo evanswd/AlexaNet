@@ -4,12 +4,19 @@ namespace Alexa.NET.Skills.Insteon.Service.Models.Response;
 
 public class StatusResponse
 {
-    public string DeviceId { get; }
-    public byte AckHops { get; }
-    public byte Delta { get; }
-    public byte OnLevel { get; }
+    public string? DeviceId { get; private set; }
+    public byte AckHops { get; private set; }
+    public byte Delta { get; private set; }
+    public byte OnLevel { get; private set; }
+
+    public StatusResponse() { }
 
     public StatusResponse(string responseXML)
+    {
+        ParseResponseXML(responseXML);
+    }
+
+    public void ParseResponseXML(string responseXML)
     {
         try
         {
@@ -33,5 +40,10 @@ public class StatusResponse
         {
             throw new Exception("Unable to parse the status response.", e);
         }
+    }
+
+    public override string ToString()
+    {
+        return $"Device ID '{DeviceId}' has a status of {AckHops:X2}{Delta:X2}{OnLevel:X2}";
     }
 }
