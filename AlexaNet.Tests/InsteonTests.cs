@@ -6,23 +6,24 @@ namespace AlexaNet.Tests;
 [TestClass]
 public class InsteonTests
 {
-    private string _url = null!;
+    private InsteonService _svc = null!;
 
     [TestInitialize]
     public void Initialize()
-    {
-        _url = "http://192.168.1.136:25105";
-    }
-
-    [TestMethod]
-    public void InsteonStatusTest()
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appSettings.json")
             .Build();
 
-        var svc = new InsteonService(_url, configuration["Authentication:Username"]!, configuration["Authentication:Password"]!);
-        var status = svc.GetLightStatus("282C7A").Result;
+        var url = $"http://{configuration["Insteon:Host"]}:{configuration["Insteon:Port"]}";
+
+        _svc = new InsteonService(url, configuration["Insteon:Username"]!, configuration["Insteon:Password"]!);
+    }
+
+    [TestMethod]
+    public void GetLightStatusTest()
+    {
+        var status = _svc.GetLightStatus("282C7A").Result;
         Console.WriteLine(status);
     }
 }
