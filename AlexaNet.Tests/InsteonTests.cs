@@ -26,4 +26,12 @@ public class InsteonTests
         var status = _svc.GetLightStatus("282C7A").Result;
         Console.WriteLine(status);
     }
+
+    [TestMethod]
+    public void GetFanStatusTest()
+    {
+        //var status = _svc.GetDeviceStatus("282C7A", "1903").Result;
+        var status = _svc.GetFanStatus("282C7A").Result;
+        Console.WriteLine(status);
+    }
 }

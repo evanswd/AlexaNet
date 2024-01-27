@@ -3,7 +3,7 @@
 public enum FanSpeed : byte
 {
     OFF = 0x00,
-    LOW = 0x40,
-    MEDIUM = 0xC0,
+    LOW = 0x55,
+    MEDIUM = 0xAA,
     HIGH = 0xFF
 }

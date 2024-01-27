@@ -9,6 +9,11 @@ public class InsteonService(string url, string username, string password)
 {
     #region Device Statuses
 
+    public async Task<StatusResponse> GetDeviceStatus(string deviceId, string statusCommand = "1900")
+    {
+        return await GetDeviceStatus(new StatusRequest(deviceId, statusCommand));
+    }
+
     public async Task<StatusResponse> GetDeviceStatus(StatusRequest request)
     {
         return await GetDeviceStatus<StatusResponse>(request);
@@ -30,6 +35,12 @@ public class InsteonService(string url, string username, string password)
     public async Task<LightStatusResponse> GetLightStatus(string deviceId)
     {
         return await GetDeviceStatus<LightStatusResponse>(new StatusRequest(deviceId));
+    }
+
+    public async Task<FanStatusResponse> GetFanStatus(string deviceId)
+    {
+        //1903 is the specific status command for fans
+        return await GetDeviceStatus<FanStatusResponse>(new StatusRequest(deviceId, "1903"));
     }
 
     #endregion
