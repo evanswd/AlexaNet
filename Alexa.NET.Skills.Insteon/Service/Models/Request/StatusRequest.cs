@@ -1,7 +1,7 @@
 ﻿namespace Alexa.NET.Skills.Insteon.Service.Models.Request;
 
-public class StatusRequest(string deviceId, string statusCommand = "1900") 
+public class StatusRequest(string deviceId, byte statusCmd2 = 0x00) 
     : AbstractDirectRequest(deviceId)
 {
-    public readonly string StatusCommand = statusCommand;
+    public readonly byte StatusCmd2 = statusCmd2;
 }

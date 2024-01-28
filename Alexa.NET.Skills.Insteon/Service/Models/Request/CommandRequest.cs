@@ -2,7 +2,7 @@
 
 public class CommandRequest : AbstractDirectRequest
 {
-    public CommandRequest(string deviceId, byte cmd1, byte cmd2, byte[]? extendedData = null)
+    public CommandRequest(string deviceId, Command cmd1, byte cmd2, byte[]? extendedData = null)
         : base(deviceId)
     {
         Cmd1 = cmd1;
@@ -13,7 +13,7 @@ public class CommandRequest : AbstractDirectRequest
     public CommandRequest(string deviceId) 
         : base(deviceId) { }
 
-    public byte Cmd1 { get; protected set; }
+    public Command Cmd1 { get; protected set; }
     public byte Cmd2 { get; protected set; }
     public byte[]? ExtendedData { get; protected set; }
 
