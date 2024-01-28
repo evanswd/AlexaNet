@@ -8,6 +8,9 @@ namespace Alexa.NET.Skills.Insteon.Service;
 
 public class InsteonService(string url, string username, string password)
 {
+    private const byte StartByte = 0x02;
+    private const byte SendInsteonMsg = 0x62;
+
     #region Device Statuses
 
     public async Task<StatusResponse> GetDeviceStatus(string deviceId, byte statusCmd2 = 0x00)
@@ -62,7 +65,7 @@ public class InsteonService(string url, string username, string password)
         var authHeader = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}")));
         client.DefaultRequestHeaders.Authorization = authHeader;
 
-        var cmdUrl = url + $"/3?0262{request.DeviceId}{request.MsgFlag:X2}{(byte)request.Cmd1:X2}{request.Cmd2:X2}";
+        var cmdUrl = url + $"/3?{StartByte:X2}{SendInsteonMsg:X2}{request.DeviceId}{request.MsgFlag:X2}{(byte)request.Cmd1:X2}{request.Cmd2:X2}";
         if (request.ExtendedData != null)
         {
             cmdUrl += BitConverter.ToString(request.ExtendedData).Replace("-", "");
