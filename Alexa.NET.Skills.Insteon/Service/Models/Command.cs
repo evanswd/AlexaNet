@@ -24,7 +24,7 @@ public enum Command : byte
     LIGHT_OFF_AT_RAMP_RATE_AND_DIM = 0x26,
     LIGHT_BRIGHTEN_ONE_STEP = 0x27,
     LIGHT_DIM_ONE_STEP = 0x28,
-    //End AI Commands
+    //TODO: End AI Commands
 
     STANDARD_MSG_RECEIVED = 0x50,
     EXTENDED_MSG_RECEIVED = 0x51,

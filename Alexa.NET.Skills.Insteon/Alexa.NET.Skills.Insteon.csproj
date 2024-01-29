@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Alexa.NET.SmartHome\Alexa.NET.SmartHome.csproj" />
+  </ItemGroup>
+
 </Project>

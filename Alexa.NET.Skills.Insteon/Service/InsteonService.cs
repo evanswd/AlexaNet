@@ -6,7 +6,7 @@ using Alexa.NET.Skills.Insteon.Service.Models.Response;
 
 namespace Alexa.NET.Skills.Insteon.Service;
 
-public class InsteonService(string url, string username, string password)
+public class InsteonService(string url, string username, string password) : IDisposable
 {
     private const byte StartByte = 0x02;
     private const byte SendInsteonMsg = 0x62;
@@ -96,4 +96,9 @@ public class InsteonService(string url, string username, string password)
     }
 
     #endregion
+
+    public void Dispose()
+    {
+        //No need to do anything here... but we may need to in the future
+    }
 }
