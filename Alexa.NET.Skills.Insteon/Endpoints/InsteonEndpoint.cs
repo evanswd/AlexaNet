@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 namespace Alexa.NET.Skills.Insteon.Endpoints;
 
 [RequiresLock]
-public class InsteonEndpoint : AbstractSmartHomeInterface, IReportState
+public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportState, IPowerController
 {
 
     private InsteonService? _insteonService;
@@ -25,7 +25,7 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IReportState
                 Config["Insteon.Username"], Config["Insteon.Password"]);
         }
     }
-    public InsteonEndpoint(IConfiguration config, string alexaNamespace) 
+    public InsteonEndpoint(IConfiguration config, string alexaNamespace)
         : base(config, alexaNamespace) { }
 
 
@@ -49,20 +49,118 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IReportState
     {
         //TODO: Should be Async...
         StatusResponse status;
-        //If it ends with 03 its a fan....
-        if (directive.Endpoint.EndpointID.EndsWith("03"))
-            status = InsteonService.GetFanStatus(directive.Endpoint.EndpointID[..^2]).Result;
+        //If it ends with FAN its a fan....
+        if (directive.Endpoint.EndpointID.EndsWith("FAN"))
+            status = InsteonService.GetFanStatus(directive.Endpoint.EndpointID[..^3]).Result;
         else
-            status = InsteonService.GetLightStatus(directive.Endpoint.EndpointID[..^2]).Result;
+            status = InsteonService.GetLightStatus(directive.Endpoint.EndpointID).Result;
 
         var properties = new[]
         {
             new ContextProperty {Namespace = "Alexa.PowerController", Name = "powerState", Value = status.OnLevel > 0 ? "ON" : "OFF"},
             new ContextProperty {Namespace = "Alexa.PowerLevelController", Name = "powerLevel", Value = status.OnLevel * 100 / 255}
+            //TODO: Add Fan State
         };
 
         return BuildResponse(directive, new Context { Properties = properties });
     }
 
     #endregion
+
+    #region IDiscovery Handlers
+
+    public EventResponse Discover(DirectiveRequest dr)
+    {
+        var response = new EventResponse
+        {
+            Event = new Directive
+            {
+                Header = dr.Directive.Header,
+                Payload = new Payload
+                {
+                    //TODO: I would love to pull these from Insteon, but alas, I am lazy...
+                    Endpoints = GenerateFanLincEndpoints("HEX_MB", "Master Fan")
+                                .Concat(GenerateFanLincEndpoints("HEX_GB", "Guest Room Fan"))
+                                .Concat(GenerateFanLincEndpoints("HEX_FB", "Front Bedroom Fan"))
+                                .Concat(GenerateFanLincEndpoints("HEX_RB", "Rear Bedroom Fan")).ToArray()
+                }
+            }
+        };
+
+        //Fix the header...
+        response.Event.Header.Name = "Discover.Response";
+        //Kick it back
+        return response;
+    }
+
+    #endregion
+
+    #region IPowerController Handlers
+
+    public EventResponse TurnOn(DirectiveRequest dr)
+    {
+        using (InsteonService)
+        {
+            if (dr.Directive.Endpoint.EndpointID.EndsWith("FAN"))
+                //TODO: Should be Async
+                InsteonService.TurnFanOn(dr.Directive.Endpoint.EndpointID[..^3]).RunSynchronously();
+            else
+                InsteonService.TurnLightOn(dr.Directive.Endpoint.EndpointID).RunSynchronously();
+
+            return BuildResponse(dr.Directive);
+        }
+    }
+
+    public EventResponse TurnOff(DirectiveRequest dr)
+    {
+        using (InsteonService)
+        {
+            if (dr.Directive.Endpoint.EndpointID.EndsWith("FAN"))
+                //TODO: Should be Async
+                InsteonService.TurnFanOff(dr.Directive.Endpoint.EndpointID[..^3]).RunSynchronously();
+            else
+                InsteonService.TurnLightOff(dr.Directive.Endpoint.EndpointID).RunSynchronously();
+
+            return BuildResponse(dr.Directive);
+        }
+    }
+
+    #endregion
+
+    private Endpoint[] GenerateFanLincEndpoints(string endpointID, string friendlyName)
+    {
+        return
+        [
+            new Endpoint
+            {
+                //Add FAN to the endpoint cause Insteon uses the same device ID
+                EndpointID = endpointID + "FAN", //Careful... alphanumeric only... BAD documentation...
+                ManufacturerName = "Insteon",
+                Description = "Not-so-smart FanLinc by Bill Evans",
+                FriendlyName = friendlyName,
+                DisplayCategories = [DisplayCategories.FAN],
+                Capabilities = new[]
+                {
+                    new Capability("Alexa"),
+                    new Capability("Alexa.PowerController", null, "powerState"),
+                    new Capability("Alexa.PowerLevelController", null, "powerLevel")
+                    //TODO: Add Fan State
+                }
+            },
+            new Endpoint
+            {
+                EndpointID = endpointID, //Careful... alphanumeric only... BAD documentation...
+                ManufacturerName = "Insteon",
+                Description = "Not-so-smart FanLinc by Bill Evans",
+                FriendlyName = friendlyName + " Light",
+                DisplayCategories = [DisplayCategories.LIGHT],
+                Capabilities = new[]
+                {
+                    new Capability("Alexa"),
+                    new Capability("Alexa.PowerController", null, "powerState"),
+                    new Capability("Alexa.PowerLevelController", null, "powerLevel")
+                }
+            },
+        ];
+    }
 }
