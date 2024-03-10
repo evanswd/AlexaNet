@@ -13,7 +13,7 @@ public static class Invoker
     //Used if the 
     private static readonly object LockObject = new();
 
-    public static T InvokeAlexaMethod<T>(IConfiguration config, Header directiveHeader, string requestJson, ILogger logger)
+    public static T InvokeAlexaMethod<T>(IConfiguration config, Header directiveHeader, string requestJson, ILogger logger, string assemblyScope = null)
     {
             logger.LogWarning($"Got a request for {directiveHeader.Namespace} to complete {directiveHeader.Name} action.");
             logger.LogWarning(requestJson);
@@ -27,6 +27,10 @@ public static class Invoker
                             .Any(i => i.GetCustomAttributes(typeof(AlexaNamespaceAttribute), true)
                                 .Any(ca => ((AlexaNamespaceAttribute)ca).Namespace == directiveHeader.Namespace))
                         select t;
+
+            //If we have a scope, filter the types to only those in the scope
+            if(assemblyScope != null)
+                types = types.Where(t => t.Assembly.GetName().Name == assemblyScope);
 
             //TODO: Do this better... how to handle multiple classes? This only handles the first one that comes back...
             //For example, if both a SpeakerZone and a LightingZone implement 'Alexa.PowerController' we will have an issue...

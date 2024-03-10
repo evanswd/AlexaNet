@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Alexa.NET.Skills.Insteon\Alexa.NET.Skills.Insteon.csproj" />
     <ProjectReference Include="..\Alexa.NET.Skills.Monoprice\Alexa.NET.Skills.Monoprice.csproj" />
     <ProjectReference Include="..\Alexa.NET.SmartHome\Alexa.NET.SmartHome.csproj" />
   </ItemGroup>
