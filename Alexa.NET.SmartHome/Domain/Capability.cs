@@ -38,7 +38,7 @@ public class Capability
             Type = "AlexaInterface";
             Version = "3";
             Interface = alexaInterface;
-            if(supported != null && supported.Length > 0)
+            if(supported is { Length: > 0 })
                 Properties = new Properties
                 { 
                     Supported = supported.Select(sup => new Supported(sup)).ToArray(),

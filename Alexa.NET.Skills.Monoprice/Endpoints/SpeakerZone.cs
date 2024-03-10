@@ -286,7 +286,7 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
                 new Capability("Alexa"),
                 new Capability("Alexa.Speaker", null, "volume", "muted"),
                 new Capability("Alexa.PowerController", null, "powerState")
-                //new Capability("Alexa.EqualizerController", new Configuration
+                //new Capability("Alexa.EqualizerController", new EqualizerConfiguration
                 //{
                 //    Bands = new EqualizerBand
                 //    {

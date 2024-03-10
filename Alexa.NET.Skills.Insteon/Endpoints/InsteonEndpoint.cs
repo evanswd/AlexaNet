@@ -139,13 +139,85 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
                 Description = "Not-so-smart FanLinc by Bill Evans",
                 FriendlyName = friendlyName,
                 DisplayCategories = [DisplayCategories.FAN],
-                Capabilities = new[]
-                {
+                Capabilities =
+                [
                     new Capability("Alexa"),
                     new Capability("Alexa.PowerController", null, "powerState"),
-                    new Capability("Alexa.PowerLevelController", null, "powerLevel")
-                    //TODO: Add Fan State
-                }
+                    new Capability("Alexa.PowerLevelController", null, "powerLevel"),
+                    //Fan State
+                    new Capability("Alexa.RangeController", null, "rangeValue")
+                    {
+                        Instance = "Fan.Speed",
+                        Configurations = new RangeConfiguration
+                        {
+                            SupportedRange = new SupportedRange
+                            {
+                                MaximumValue = 3,
+                                MinimumValue = 0,
+                                Precision = 1
+                            },
+                            Presets =
+                            [
+                                new RangePreset
+                                {
+                                    RangeValue = 0,
+                                    PresetResources =
+                                    [
+                                        new PresetResource
+                                        {
+                                            FriendlyNames =
+                                            [
+                                                new FriendlyName("Alexa.Setting.FanSpeed.Off")
+                                            ]
+                                        }
+                                    ]
+                                },
+                                new RangePreset
+                                {
+                                    RangeValue = 1,
+                                    PresetResources =
+                                    [
+                                        new PresetResource
+                                        {
+                                            FriendlyNames =
+                                            [
+                                                new FriendlyName("Alexa.Setting.FanSpeed.Low")
+                                            ]
+                                        }
+                                    ]
+                                },
+                                new RangePreset
+                                {
+                                    RangeValue = 2,
+                                    PresetResources =
+                                    [
+                                        new PresetResource
+                                        {
+                                            FriendlyNames =
+                                            [
+                                                new FriendlyName("Alexa.Setting.FanSpeed.Medium")
+                                            ]
+                                        }
+                                    ]
+                                },
+                                new RangePreset
+                                {
+                                    RangeValue = 3,
+                                    PresetResources =
+                                    [
+                                        new PresetResource
+                                        {
+                                            FriendlyNames =
+                                            [
+                                                new FriendlyName("Alexa.Setting.FanSpeed.High")
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
             },
             new Endpoint
             {
@@ -154,12 +226,12 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
                 Description = "Not-so-smart FanLinc by Bill Evans",
                 FriendlyName = friendlyName + " Light",
                 DisplayCategories = [DisplayCategories.LIGHT],
-                Capabilities = new[]
-                {
+                Capabilities =
+                [
                     new Capability("Alexa"),
                     new Capability("Alexa.PowerController", null, "powerState"),
                     new Capability("Alexa.PowerLevelController", null, "powerLevel")
-                }
+                ]
             },
         ];
     }
