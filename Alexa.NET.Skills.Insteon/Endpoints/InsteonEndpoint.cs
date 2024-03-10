@@ -79,10 +79,10 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
                 Payload = new Payload
                 {
                     //TODO: I would love to pull these from Insteon, but alas, I am lazy...
-                    Endpoints = GenerateFanLincEndpoints("HEX_MB", "Master Fan")
-                                .Concat(GenerateFanLincEndpoints("HEX_GB", "Guest Room Fan"))
-                                .Concat(GenerateFanLincEndpoints("HEX_FB", "Front Bedroom Fan"))
-                                .Concat(GenerateFanLincEndpoints("HEX_RB", "Rear Bedroom Fan")).ToArray()
+                    Endpoints = GenerateFanLincEndpoints("282C7A", "Master Fan")
+                                .Concat(GenerateFanLincEndpoints("282A1D", "Guest Room Fan"))
+                                .Concat(GenerateFanLincEndpoints("2D7E22", "Front Bedroom Fan"))
+                                .Concat(GenerateFanLincEndpoints("2D7CE0", "Rear Bedroom Fan")).ToArray()
                 }
             }
         };
