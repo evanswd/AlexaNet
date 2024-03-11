@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 namespace Alexa.NET.Skills.Insteon.Endpoints;
 
 [RequiresLock]
-public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportState, IPowerController
+public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportState, IPowerController, IPowerLevelController
 {
 
     private InsteonService? _insteonService;
@@ -103,9 +103,9 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
         {
             if (dr.Directive.Endpoint.EndpointID.EndsWith("FAN"))
                 //TODO: Should be Async
-                InsteonService.TurnFanOn(dr.Directive.Endpoint.EndpointID[..^3]).RunSynchronously();
+                InsteonService.TurnFanOn(dr.Directive.Endpoint.EndpointID[..^3]).Wait();
             else
-                InsteonService.TurnLightOn(dr.Directive.Endpoint.EndpointID).RunSynchronously();
+                InsteonService.TurnLightOn(dr.Directive.Endpoint.EndpointID).Wait();
 
             return BuildResponse(dr.Directive);
         }
@@ -117,9 +117,9 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
         {
             if (dr.Directive.Endpoint.EndpointID.EndsWith("FAN"))
                 //TODO: Should be Async
-                InsteonService.TurnFanOff(dr.Directive.Endpoint.EndpointID[..^3]).RunSynchronously();
+                InsteonService.TurnFanOff(dr.Directive.Endpoint.EndpointID[..^3]).Wait();
             else
-                InsteonService.TurnLightOff(dr.Directive.Endpoint.EndpointID).RunSynchronously();
+                InsteonService.TurnLightOff(dr.Directive.Endpoint.EndpointID).Wait();
 
             return BuildResponse(dr.Directive);
         }
@@ -127,7 +127,47 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
 
     #endregion
 
-    //TODO: Add Power Level...
+    #region IPowerLevelController Handlers
+
+    public EventResponse SetPowerLevel(DirectiveRequest<SetPowerLevelPayload> dr)
+    {
+        using (InsteonService)
+        {
+            //Do nothing... Fans shouldn't have power levels...
+            if (dr.Directive.Endpoint.EndpointID.EndsWith("FAN"))
+                return BuildResponse(dr.Directive);
+
+            if(dr.Directive.Payload.PowerLevel == 0)
+                InsteonService.TurnLightOff(dr.Directive.Endpoint.EndpointID).Wait();
+            else
+                InsteonService.TurnLightOn(dr.Directive.Endpoint.EndpointID, dr.Directive.Payload.PowerLevel).Wait();
+
+            return BuildResponse(dr.Directive);
+        }
+    }
+
+    public EventResponse AdjustPowerLevel(DirectiveRequest<AdjustPowerLevelPayload> dr)
+    {
+        using (InsteonService)
+        {
+            //Do nothing... Fans shouldn't have power levels...
+            if (dr.Directive.Endpoint.EndpointID.EndsWith("FAN"))
+                return BuildResponse(dr.Directive);
+
+            //For this one... we need to get the current level and adjust it...
+            var status = InsteonService.GetLightStatus(dr.Directive.Endpoint.EndpointID).Result;
+            var newLevel = status.OnLevel + dr.Directive.Payload.PowerLevelDelta;
+
+            if (newLevel <= 0)
+                InsteonService.TurnLightOff(dr.Directive.Endpoint.EndpointID).Wait();
+            else
+                InsteonService.TurnLightOn(dr.Directive.Endpoint.EndpointID, newLevel).Wait();
+
+            return BuildResponse(dr.Directive);
+        }
+    }
+
+    #endregion
 
     private Endpoint[] GenerateFanLincEndpoints(string endpointID, string friendlyName)
     {
