@@ -69,13 +69,13 @@ public class FriendlyName
 
     public class FriendlyNameValue
     {
-        [JsonProperty("assetId")]
+        [JsonProperty("assetId", NullValueHandling = NullValueHandling.Ignore)]
         public string AssetID { get; set; }
 
-        [JsonProperty("text")]
+        [JsonProperty("text", NullValueHandling = NullValueHandling.Ignore)]
         public string Text { get; set; }
 
-        [JsonProperty("locale")]
+        [JsonProperty("locale", NullValueHandling = NullValueHandling.Ignore)]
         public string Locale { get; set; }
     }
 }

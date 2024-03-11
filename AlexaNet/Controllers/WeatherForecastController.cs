@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alexa.NET.Skills.Insteon.Service;
 using Alexa.NET.Skills.Monoprice.Service;
 using AlexaNet.Infrastructure.Services.Denon;
 using Microsoft.AspNetCore.Authorization;
@@ -63,5 +64,25 @@ public class WeatherForecastController : ControllerBase
         using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
             int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
         svc.SetPowerOn(8);
+    }
+
+    [HttpGet]
+    [Route("FanLightOn")]
+    public void FanLightOn()
+    {
+        var url = $"http://{_config["Insteon:Host"]}:{_config["Insteon:Port"]}";
+
+        var svc = new InsteonService(url, _config["Insteon:Username"]!, _config["Insteon:Password"]!);
+        svc.TurnLightOn("282C7A", 100).Wait();
+    }
+
+    [HttpGet]
+    [Route("FanLightOff")]
+    public void FanLightOff()
+    {
+        var url = $"http://{_config["Insteon:Host"]}:{_config["Insteon:Port"]}";
+
+        var svc = new InsteonService(url, _config["Insteon:Username"]!, _config["Insteon:Password"]!);
+        svc.TurnLightOff("282C7A").Wait();
     }
 }

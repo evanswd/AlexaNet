@@ -21,8 +21,8 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
     {
         get
         {
-            return _insteonService ??= new InsteonService($"{Config["Insteon.Host"]}:{Config["Insteon.Port"]}",
-                Config["Insteon.Username"], Config["Insteon.Password"]);
+            return _insteonService ??= new InsteonService($"http://{Config["Insteon:Host"]}:{Config["Insteon:Port"]}",
+                Config["Insteon:Username"], Config["Insteon:Password"]);
         }
     }
     public InsteonEndpoint(IConfiguration config, string alexaNamespace)
@@ -127,98 +127,101 @@ public class InsteonEndpoint : AbstractSmartHomeInterface, IDiscovery, IReportSt
 
     #endregion
 
+    //TODO: Add Power Level...
+
     private Endpoint[] GenerateFanLincEndpoints(string endpointID, string friendlyName)
     {
         return
         [
-            new Endpoint
-            {
-                //Add FAN to the endpoint cause Insteon uses the same device ID
-                EndpointID = endpointID + "FAN", //Careful... alphanumeric only... BAD documentation...
-                ManufacturerName = "Insteon",
-                Description = "Not-so-smart FanLinc by Bill Evans",
-                FriendlyName = friendlyName,
-                DisplayCategories = [DisplayCategories.FAN],
-                Capabilities =
-                [
-                    new Capability("Alexa"),
-                    new Capability("Alexa.PowerController", null, "powerState"),
-                    new Capability("Alexa.PowerLevelController", null, "powerLevel"),
-                    //Fan State
-                    new Capability("Alexa.RangeController", null, "rangeValue")
-                    {
-                        Instance = "Fan.Speed",
-                        Configurations = new RangeConfiguration
-                        {
-                            SupportedRange = new SupportedRange
-                            {
-                                MaximumValue = 3,
-                                MinimumValue = 0,
-                                Precision = 1
-                            },
-                            Presets =
-                            [
-                                new RangePreset
-                                {
-                                    RangeValue = 0,
-                                    PresetResources =
-                                    [
-                                        new PresetResource
-                                        {
-                                            FriendlyNames =
-                                            [
-                                                new FriendlyName("Alexa.Setting.FanSpeed.Off")
-                                            ]
-                                        }
-                                    ]
-                                },
-                                new RangePreset
-                                {
-                                    RangeValue = 1,
-                                    PresetResources =
-                                    [
-                                        new PresetResource
-                                        {
-                                            FriendlyNames =
-                                            [
-                                                new FriendlyName("Alexa.Setting.FanSpeed.Low")
-                                            ]
-                                        }
-                                    ]
-                                },
-                                new RangePreset
-                                {
-                                    RangeValue = 2,
-                                    PresetResources =
-                                    [
-                                        new PresetResource
-                                        {
-                                            FriendlyNames =
-                                            [
-                                                new FriendlyName("Alexa.Setting.FanSpeed.Medium")
-                                            ]
-                                        }
-                                    ]
-                                },
-                                new RangePreset
-                                {
-                                    RangeValue = 3,
-                                    PresetResources =
-                                    [
-                                        new PresetResource
-                                        {
-                                            FriendlyNames =
-                                            [
-                                                new FriendlyName("Alexa.Setting.FanSpeed.High")
-                                            ]
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                ]
-            },
+            //TODO: Fan isn't working yet...
+            //new Endpoint
+            //{
+            //    //Add FAN to the endpoint cause Insteon uses the same device ID
+            //    EndpointID = endpointID + "FAN", //Careful... alphanumeric only... BAD documentation...
+            //    ManufacturerName = "Insteon",
+            //    Description = "Not-so-smart FanLinc by Bill Evans",
+            //    FriendlyName = friendlyName,
+            //    DisplayCategories = [DisplayCategories.FAN],
+            //    Capabilities =
+            //    [
+            //        new Capability("Alexa"),
+            //        new Capability("Alexa.PowerController", null, "powerState"),
+            //        //new Capability("Alexa.PowerLevelController", null, "powerLevel"),
+            //        //Fan State
+            //        new Capability("Alexa.RangeController", null, "rangeValue")
+            //        {
+            //            Instance = "Fan.Speed",
+            //            Configuration = new RangeConfiguration
+            //            {
+            //                SupportedRange = new SupportedRange
+            //                {
+            //                    MaximumValue = 3,
+            //                    MinimumValue = 1,
+            //                    Precision = 1
+            //                },
+            //                Presets =
+            //                [
+            //                    //new RangePreset
+            //                    //{
+            //                    //    RangeValue = 0,
+            //                    //    PresetResources =
+            //                    //    [
+            //                    //        new PresetResource
+            //                    //        {
+            //                    //            FriendlyNames =
+            //                    //            [
+            //                    //                new FriendlyName("Off", null)
+            //                    //            ]
+            //                    //        }
+            //                    //    ]
+            //                    //},
+            //                    new RangePreset
+            //                    {
+            //                        RangeValue = 1,
+            //                        PresetResources =
+            //                        [
+            //                            new PresetResource
+            //                            {
+            //                                FriendlyNames =
+            //                                [
+            //                                    new FriendlyName("Alexa.Value.Low")
+            //                                ]
+            //                            }
+            //                        ]
+            //                    },
+            //                    new RangePreset
+            //                    {
+            //                        RangeValue = 2,
+            //                        PresetResources =
+            //                        [
+            //                            new PresetResource
+            //                            {
+            //                                FriendlyNames =
+            //                                [
+            //                                    new FriendlyName("Alexa.Value.Medium")
+            //                                ]
+            //                            }
+            //                        ]
+            //                    },
+            //                    new RangePreset
+            //                    {
+            //                        RangeValue = 3,
+            //                        PresetResources =
+            //                        [
+            //                            new PresetResource
+            //                            {
+            //                                FriendlyNames =
+            //                                [
+            //                                    new FriendlyName("Alexa.Value.High")
+            //                                ]
+            //                            }
+            //                        ]
+            //                    }
+            //                ]
+            //            }
+            //        }
+            //    ]
+            //},
             new Endpoint
             {
                 EndpointID = endpointID, //Careful... alphanumeric only... BAD documentation...

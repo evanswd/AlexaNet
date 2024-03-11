@@ -21,8 +21,8 @@ public class Capability
     [JsonProperty("properties")]
     public Properties Properties { get; set; }
 
-    [JsonProperty("configurations")]
-    public Configuration Configurations { get; set; }
+    [JsonProperty("configuration")]
+    public Configuration Configuration { get; set; }
 
     //[JsonProperty("capabilityResources")]
     //public CapabilityResources CapabilityResources { get; set; }
@@ -33,7 +33,7 @@ public class Capability
     //[JsonProperty("verificationsRequired")]
     //public VerificationsRequired[] VerificationsRequired { get; set; }
 
-    public Capability(string alexaInterface, Configuration configurations = null, params string[] supported)
+    public Capability(string alexaInterface, Configuration configuration = null, params string[] supported)
     {
             Type = "AlexaInterface";
             Version = "3";
@@ -45,6 +45,6 @@ public class Capability
                     Retrievable = true
                     //ProactivelyReported = true
                 };
-            Configurations = configurations;
+            Configuration = configuration;
         }
 }
