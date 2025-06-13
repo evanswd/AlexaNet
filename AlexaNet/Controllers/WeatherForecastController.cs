@@ -49,9 +49,9 @@ public class WeatherForecastController : ControllerBase
         //using var svc = new HeosService("192.168.1.21");
         //svc.SetPowerOff();
 
-        using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
-            int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
-        svc.SetPowerOff(8);
+        //using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
+        //    int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
+        //svc.SetPowerOff(8);
     }
 
     [HttpGet]
@@ -61,9 +61,9 @@ public class WeatherForecastController : ControllerBase
         //using var svc = new HeosService("192.168.1.21");
         //svc.SetPowerOn();
             
-        using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
-            int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
-        svc.SetPowerOn(8);
+        //using var svc = new MonopriceService(_config["Monoprice.IpAddress"], 
+        //    int.Parse(_config["Monoprice.TcpPortController1"]), int.Parse(_config["Monoprice.TcpPortController2"]));
+        //svc.SetPowerOn(8);
     }
 
     [HttpGet]

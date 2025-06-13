@@ -16,15 +16,28 @@ namespace Alexa.NET.Skills.Monoprice.Endpoints;
 public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
     IPowerController, ISpeaker, IEqualizerController
 {
-    private MonopriceService _mpService;
+    private static MonopriceService _sharedMonopriceService;
+    private static readonly object _serviceLock = new object();
 
     private MonopriceService MonopriceService
     {
         get
         {
-            return _mpService ??= new MonopriceService(Config["Monoprice.IpAddress"],
-                int.Parse(Config["Monoprice.TcpPortController1"]),
-                int.Parse(Config["Monoprice.TcpPortController2"]));
+            if (_sharedMonopriceService == null)
+            {
+                lock (_serviceLock)
+                {
+                    if (_sharedMonopriceService == null)
+                    {
+                        _sharedMonopriceService = new MonopriceService(
+                            Config["Monoprice.IpAddress"],
+                            null, // No logger for now to keep it simple
+                            int.Parse(Config["Monoprice.TcpPortController1"]),
+                            int.Parse(Config["Monoprice.TcpPortController2"]));
+                    }
+                }
+            }
+            return _sharedMonopriceService;
         }
     }
 
@@ -35,20 +48,14 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
 
     public EventResponse TurnOn(DirectiveRequest dr)
     {
-        using (MonopriceService)
-        {
-            MonopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
-            return BuildResponse(dr.Directive);
-        }
+        MonopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
+        return BuildResponse(dr.Directive);
     }
 
     public EventResponse TurnOff(DirectiveRequest dr)
     {
-        using (MonopriceService)
-        {
-            MonopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
-            return BuildResponse(dr.Directive);
-        }
+        MonopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
+        return BuildResponse(dr.Directive);
     }
 
     #endregion
@@ -57,60 +64,51 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
 
     public EventResponse SetMute(DirectiveRequest<SetMutePayload> dr)
     {
-        using (MonopriceService)
-        {
-            MonopriceService.SetMute(dr.Directive.Payload.Mute, dr.Directive.Endpoint.EndpointID);
-            return BuildResponse(dr.Directive);
-        }
+        MonopriceService.SetMute(dr.Directive.Payload.Mute, dr.Directive.Endpoint.EndpointID);
+        return BuildResponse(dr.Directive);
     }
 
     public EventResponse SetVolume(DirectiveRequest<SetVolumePayload> dr)
     {
-        using (MonopriceService)
-        {
-            var status = MonopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
-            var volume = dr.Directive.Payload.Volume;
+        var status = MonopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
+        var volume = dr.Directive.Payload.Volume;
 
-            //If it is off and we set it to any volume, turn it on...
-            if (volume <= 0 && status.PowerOn)
-                MonopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
+        //If it is off and we set it to any volume, turn it on...
+        if (volume <= 0 && status.PowerOn)
+            MonopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
 
-            //If it is on and we set it to 0 or less... turn it off...
-            if (volume > 0 && (!status.PowerOn || status.Volume <= 0))
-                MonopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
+        //If it is on and we set it to 0 or less... turn it off...
+        if (volume > 0 && (!status.PowerOn || status.Volume <= 0))
+            MonopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
 
-            //When in doubt, change the volume...
-            MonopriceService.SetVolume(ConvertVolumeToMonoprice(volume), dr.Directive.Endpoint.EndpointID);
+        //When in doubt, change the volume...
+        MonopriceService.SetVolume(ConvertVolumeToMonoprice(volume), dr.Directive.Endpoint.EndpointID);
 
-            //Kick it back to Alexa
-            return BuildResponse(dr.Directive);
-        }
+        //Kick it back to Alexa
+        return BuildResponse(dr.Directive);
     }
 
     public EventResponse AdjustVolume(DirectiveRequest<AdjustVolumePayload> dr)
     {
-        using (MonopriceService)
-        {
-            var status = MonopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
-            var volume = dr.Directive.Payload.Volume;
+        var status = MonopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
+        var volume = dr.Directive.Payload.Volume;
 
-            //Force the volume to be between 0 and 100 
-            volume = Math.Max(Math.Min(ConvertVolumeToAlexa(status.Volume) + volume, 100), 0);
+        //Force the volume to be between 0 and 100 
+        volume = Math.Max(Math.Min(ConvertVolumeToAlexa(status.Volume) + volume, 100), 0);
 
-            //If it is off and we set it to any volume, turn it on...
-            if (volume == 0 && status.PowerOn)
-                MonopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
+        //If it is off and we set it to any volume, turn it on...
+        if (volume == 0 && status.PowerOn)
+            MonopriceService.SetPowerOff(dr.Directive.Endpoint.EndpointID);
 
-            //If it is on and we set it to 0 or less... turn it off...
-            if (volume > 0 && !status.PowerOn)
-                MonopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
+        //If it is on and we set it to 0 or less... turn it off...
+        if (volume > 0 && !status.PowerOn)
+            MonopriceService.SetPowerOn(dr.Directive.Endpoint.EndpointID);
 
-            //When in doubt, change the volume...
-            MonopriceService.SetVolume(ConvertVolumeToMonoprice(volume), dr.Directive.Endpoint.EndpointID);
+        //When in doubt, change the volume...
+        MonopriceService.SetVolume(ConvertVolumeToMonoprice(volume), dr.Directive.Endpoint.EndpointID);
 
-            //Kick it back to Alexa
-            return BuildResponse(dr.Directive);
-        }
+        //Kick it back to Alexa
+        return BuildResponse(dr.Directive);
     }
 
     #endregion
@@ -119,7 +117,6 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
 
     public EventResponse SetMode(DirectiveRequest<SetModePayload> dr)
     {
-
         return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE,
             "The speaker does not support setting the mode.");
     }
@@ -130,18 +127,15 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
             return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE,
                 "The speaker does not support mid range.");
 
-        using (MonopriceService)
+        foreach (var band in dr.Directive.Payload.Bands)
         {
-            foreach (var band in dr.Directive.Payload.Bands)
-            {
-                if (band.Name == EqualizerBands.BASS)
-                    MonopriceService.SetBass(band.Value, dr.Directive.Endpoint.EndpointID);
-                else if (band.Name == EqualizerBands.TREBLE)
-                    MonopriceService.SetTreble(band.Value, dr.Directive.Endpoint.EndpointID);
-            }
-
-            return BuildResponse(dr.Directive);
+            if (band.Name == EqualizerBands.BASS)
+                MonopriceService.SetBass(band.Value, dr.Directive.Endpoint.EndpointID);
+            else if (band.Name == EqualizerBands.TREBLE)
+                MonopriceService.SetTreble(band.Value, dr.Directive.Endpoint.EndpointID);
         }
+
+        return BuildResponse(dr.Directive);
     }
 
     public EventResponse AdjustBands(DirectiveRequest<AdjustBandsPayload> dr)
@@ -150,41 +144,35 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
             return BuildErrorResponse(dr.Directive, ErrorTypes.INVALID_VALUE,
                 "The speaker does not support mid range.");
 
-        using (MonopriceService)
+        var status = MonopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
+
+        foreach (var band in dr.Directive.Payload.Bands)
         {
-            var status = MonopriceService.GetStatus().Single(zs => zs.Name == dr.Directive.Endpoint.EndpointID);
+            //Why not just pass a negative number? adjusting for it...
+            if (band.LevelDirection == LevelDirection.DOWN)
+                band.LevelDelta *= -1;
 
-            foreach (var band in dr.Directive.Payload.Bands)
+            if (band.Name == EqualizerBands.BASS)
             {
-                //Why not just pass a negative number? adjusting for it...
-                if (band.LevelDirection == LevelDirection.DOWN)
-                    band.LevelDelta *= -1;
-
-                if (band.Name == EqualizerBands.BASS)
-                {
-                    var bass = Math.Max(Math.Min(status.Bass + band.LevelDelta, 7), -7) + 7;
-                    MonopriceService.SetBass(bass, dr.Directive.Endpoint.EndpointID);
-                }
-                else if (band.Name == EqualizerBands.TREBLE)
-                {
-                    var treble = Math.Max(Math.Min(status.Treble + band.LevelDelta, 7), -7) + 7;
-                    MonopriceService.SetTreble(treble, dr.Directive.Endpoint.EndpointID);
-                }
+                var bass = Math.Max(Math.Min(status.Bass + band.LevelDelta, 7), -7) + 7;
+                MonopriceService.SetBass(bass, dr.Directive.Endpoint.EndpointID);
             }
-
-            //Kick it back to Alexa
-            return BuildResponse(dr.Directive);
+            else if (band.Name == EqualizerBands.TREBLE)
+            {
+                var treble = Math.Max(Math.Min(status.Treble + band.LevelDelta, 7), -7) + 7;
+                MonopriceService.SetTreble(treble, dr.Directive.Endpoint.EndpointID);
+            }
         }
+
+        //Kick it back to Alexa
+        return BuildResponse(dr.Directive);
     }
 
     public EventResponse ResetBands(DirectiveRequest<SetBandsPayload> dr)
     {
-        using (MonopriceService)
-        {
-            MonopriceService.SetBass(0, dr.Directive.Endpoint.EndpointID);
-            MonopriceService.SetTreble(0, dr.Directive.Endpoint.EndpointID);
-            return BuildResponse(dr.Directive);
-        }
+        MonopriceService.SetBass(0, dr.Directive.Endpoint.EndpointID);
+        MonopriceService.SetTreble(0, dr.Directive.Endpoint.EndpointID);
+        return BuildResponse(dr.Directive);
     }
 
     #endregion
@@ -227,16 +215,13 @@ public class SpeakerZone : AbstractSmartHomeInterface, IDiscovery, IReportState,
 
     public EventResponse ReportState(DirectiveRequest dr)
     {
-        using (MonopriceService)
-        {
-            var response = BuildResponse(dr.Directive);
-            //Ditch the payload
-            response.Event.Payload = null;
-            //Fix the header...
-            response.Event.Header.Name = "StateReport";
-            //Kick it back
-            return response;
-        }
+        var response = BuildResponse(dr.Directive);
+        //Ditch the payload
+        response.Event.Payload = null;
+        //Fix the header...
+        response.Event.Header.Name = "StateReport";
+        //Kick it back
+        return response;
     }
 
     #endregion
